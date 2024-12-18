@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import Footer from "@/components/Footer";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,6 +27,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  
   return (
     <html lang="en">
       <body
@@ -37,9 +40,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
             > */}
-        <Navbar/>
-        {children}
-        <Footer/>
+        <GoogleOAuthProvider clientId={`${process.env.GOOGLE_CLIENT_ID}`} >
+          <Navbar/>
+          {children}
+          <Footer/>
+        </GoogleOAuthProvider>
         {/* </ThemeProvider> */}
       </body>
     </html>

@@ -10,7 +10,8 @@ import {
     FormLabel,
     FormMessage,
   } from "@/components/ui/form"
-import { Facebook, Github } from "lucide-react";
+import { GoogleLogin, googleLogout, useGoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -30,6 +31,16 @@ const formSchema = z.object({
 
 
 export default function Page(){
+
+    const login = useGoogleLogin({
+        error_callback(nonOAuthError) {
+            console.log("ERRRE:",nonOAuthError);
+            
+        },
+        onSuccess: tokenResponse => console.log(jwtDecode(tokenResponse.access_token)),
+        onError:err => console.log("HATA ::",err),
+      });
+
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -98,7 +109,6 @@ export default function Page(){
                                 <FormLabel>
                                 Remember me
                                 </FormLabel>
-                                
                             </div>
                             </FormItem>
                         )}
@@ -117,10 +127,17 @@ export default function Page(){
                 <div className="flex justify-center items-center mt-5">
                     <p>Or login with</p>
                 </div>
-                <div className="flex gap-3 mt-5">
-                    <Button variant={`outline`} className="border-gray-600 flex-1 hover:border-primary transition-all" ><Facebook/></Button>
-                    <Button variant={`outline`} className="border-gray-600 flex-1 hover:border-primary transition-all" ><Image src={`/images/google.png`} alt="Google Images" width={22} height={22}/></Button>
-                    <Button variant={`outline`} className="border-gray-600 flex-1 hover:border-primary transition-all" ><Github/></Button>
+                <div className="flex gap-3 mt-5 justify-center">
+                    {/* <Button onClick={() => login()} variant={`outline`} className="border-gray-600 flex-1 hover:border-primary transition-all" ><Image src={`/images/google.png`} alt="Google Images" width={22} height={22}/><p className="font-bold " >Google</p></Button> */}
+                    {/* <Button onClick={async () =>{await googleLogout()}} >Logout</Button> */}
+                    <GoogleLogin
+                        onSuccess={credentialResponse => {
+                            console.log(jwtDecode(credentialResponse.credential!));
+                        }}
+                        onError={() => {
+                            console.log('Login Failed');
+                        }}
+                    />
                 </div>
             </div>
         </div>
