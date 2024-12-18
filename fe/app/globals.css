@@ -11,7 +11,11 @@ body {
     --radius: 0.5rem;
   }
 }
-/* 
-@layer btn-primary {
-  
-} */
+
+.btn-primary {
+  @apply bg-primary px-4 py-1 hover:opacity-80 transition-all rounded-xl text-white
+}
+
+.btn-black {
+  @apply bg-black px-4 py-1 hover:opacity-80 transition-all rounded-xl text-white
+}
