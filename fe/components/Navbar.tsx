@@ -2,8 +2,9 @@ import Link from "next/link";
 import Icon from "./Icon";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Menu, Search, User } from "lucide-react";
+import { Search, User } from "lucide-react";
 import { ThemeIcon } from "./ThemeIcon";
+import NavigationCategory from "./NavigationCategory";
 
 
 export default function Navbar(){
@@ -11,11 +12,10 @@ export default function Navbar(){
         <div className="">
             <Icon/>
         </div>
-
         <div className="hidden md:flex gap-3 text-gray-600" >
             <Link href={`/`} className="hover:text-black transition-all" >Home</Link>
             <Link href={`/blog`}  className="hover:text-black transition-all" >Blog</Link>
-            <Link href={`/singlePost`}  className="hover:text-black transition-all" >Single Post</Link>
+            <NavigationCategory/>
             <Link href={`/about`}  className="hover:text-black transition-all" >About</Link>
             <Link href={`/contact`}  className="hover:text-black transition-all" >Contact</Link>
         </div>
@@ -31,9 +31,9 @@ export default function Navbar(){
             </div>
         </div>
 
-        <div className="md:hidden">
+        {/* <div className="md:hidden">
             <Menu />
-        </div>
+        </div> */}
 
         
     </header>)

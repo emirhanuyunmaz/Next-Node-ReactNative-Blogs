@@ -12,7 +12,7 @@ export default {
   		colors: {
   			background: 'var(--background)',
   			foreground: 'var(--foreground)',
-			primary:"#9AA6B2",
+			primary:"#4b5563",
 			secondary: "#AF1740"
   		},
   		borderRadius: {

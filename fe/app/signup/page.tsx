@@ -4,20 +4,23 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
   } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import Link from "next/link";
  
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { useSignupMutation } from "@/lib/store/auth/authApi";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     firstName: z.string().min(2, {
@@ -46,7 +49,11 @@ const formSchema = z.object({
 })
 
 export default function Page(){
-
+    const router = useRouter()
+    const { toast } = useToast()
+    const [signup,signupResponse] = useSignupMutation() 
+    const [passwordVisible,setPasswordVisible] =useState(false)
+    const [passwordConfirmVisible,setPasswordConfirmVisible] =useState(false)
     // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,9 +67,23 @@ export default function Page(){
     },
   })
  
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    
+    await signup({...values,isGoogle:false}).unwrap()
+    .then((payload) => {
+        console.log("İşlem başarılı",payload)
+        toast({
+            title: "SUCCES",
+        })
+        router.push("/login")
+    })
+    .catch((err) => {
+        console.log("HATA :",err)
+        toast({
+            title: "ERROR",
+            description: err.data.message,
+          })
+    })
   }
 
     return(<div className="min-h-[85vh] max-w-7xl flex mx-auto gap-5 mt-3">
@@ -87,7 +108,7 @@ export default function Page(){
                         <FormItem>
                         <FormLabel>First Name</FormLabel>
                         <FormControl>
-                            <Input placeholder="First Name" {...field} className="w-full" />
+                            <Input placeholder="First Name" {...field} className="w-full border-black" />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -101,7 +122,7 @@ export default function Page(){
                         <FormItem>
                         <FormLabel>Last Name</FormLabel>
                         <FormControl>
-                            <Input placeholder="Last Name" {...field} className="w-full" />
+                            <Input placeholder="Last Name" {...field} className="w-full border-black" />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -115,7 +136,7 @@ export default function Page(){
                         <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                            <Input placeholder="Email" {...field} className="w-full" />
+                            <Input placeholder="Email" {...field} className="w-full border-black" />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -129,7 +150,12 @@ export default function Page(){
                         <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                            <Input placeholder="Password" {...field} className="w-full" />
+                            <div className="flex items-center border rounded-md border-black px-1">
+                                <Input placeholder="Password" type={`${!passwordVisible && "password"}`} {...field} className="w-full border-none" />
+                                {
+                                    passwordVisible ? <button onClick={(e) => {e.preventDefault();setPasswordVisible(false)}} ><EyeOff size={24} /></button> :<button onClick={(e) => {e.preventDefault();setPasswordVisible(true)}} ><Eye size={24} /></button>
+                                }
+                            </div>
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -143,7 +169,12 @@ export default function Page(){
                         <FormItem>
                         <FormLabel>Password Confirm</FormLabel>
                         <FormControl>
-                            <Input placeholder="Password Confirm" {...field} className="w-full" />
+                        <div className="flex items-center border rounded-md border-black px-1">
+                                <Input placeholder="Password Confirm" type={`${!passwordConfirmVisible && "password"}`} {...field} className="w-full border-none" />
+                                {
+                                    passwordConfirmVisible ? <button onClick={(e) => {e.preventDefault();setPasswordConfirmVisible(false)}} ><EyeOff size={24} /></button> :<button onClick={(e) => {e.preventDefault();setPasswordConfirmVisible(true)}} ><Eye size={24} /></button>
+                                }
+                            </div>
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -163,7 +194,7 @@ export default function Page(){
                             </FormControl>
                             <div className="space-y-1 leading-none">
                                 <FormLabel>
-                                I agree to all <span className="text-secondary hover:opacity-80 transition-all cursor-pointer" >Terms</span> and <span className="text-secondary hover:opacity-80 transition-all cursor-pointer" >Pravacy Policies</span>                                </FormLabel>
+                                I agree to all <span className="text-secondary hover:opacity-80 transition-all cursor-pointer" >Terms</span> and <span className="text-secondary hover:opacity-80 transition-all cursor-pointer" >Pravacy Policies</span></FormLabel>
                             </div>
                             </FormItem>
                         )}

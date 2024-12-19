@@ -102,7 +102,7 @@ export default function Page(){
             </div>
         </div>
 
-        <div className="md:w-2/3 flex flex-col mt-5 md:mt-0">
+        <div className="md:w-2/3 flex flex-col md:justify-center mt-5 md:mt-0">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 mx-3 gap-3">
