@@ -14,9 +14,7 @@ import {
     UserPlus,
     Users,
   } from "lucide-react"
-  
-  import { Button } from "@/components/ui/button"
-  import {
+import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuGroup,
@@ -30,12 +28,13 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
+import Link from "next/link"
   
   export function UserDropdownMenu() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline">Open</Button>
+          <button ><User/></button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -43,12 +42,12 @@ import {
           <DropdownMenuGroup>
             <DropdownMenuItem>
               <User />
-              <span>Profile</span>
+              <Link href={"/profile"} >Profile</Link  >
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <CreditCard />
-              <span>Billing</span>
+              <Link href={"/addBlog"}>Add Blog</Link>
               <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem>

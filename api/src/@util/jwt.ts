@@ -13,7 +13,7 @@ const JWT = {
         return {access_token,refresh_token}
     },
 
-    verifyToken(tokenData:string) {
+    verifyToken(tokenData:string):any {
         try{
             return jwt.verify(tokenData,"helloWorld")
         }catch(err){

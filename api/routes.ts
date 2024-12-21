@@ -2,6 +2,7 @@ import express, { Application }  from "express"
 import dotenv from 'dotenv';
 import cors from "cors"
 import authRouter from "./src/auth"
+import userRouter from "./src/user"
 const app:Application = express()
 // const app:Application = express();
 
@@ -13,5 +14,6 @@ app.use('/uploads', express.static('uploads'))
 
 
 app.use("/auth",authRouter)
+app.use("/user",userRouter)
 
 export default app;

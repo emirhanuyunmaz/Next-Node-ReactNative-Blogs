@@ -24,10 +24,11 @@ import { Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { saveToken } from "@/lib/token/tokenControl";
+import { getCookie } from "cookies-next";
 
 const formSchema = z.object({
     email: z.string().min(5, {
-      message: "Email must be at least 5 characters.",
+        message: "Email must be at least 5 characters.",
     }),
     password:z.string().min(5,{
         message:"Password must be at least 5 characters."
@@ -44,7 +45,9 @@ interface googleModel{
 
 
 export default function Page(){
+
     const router = useRouter()
+
     const {toast} = useToast()
     const [login,loginResponse] = useLoginMutation()
     const [signup,signupResponse] = useSignupMutation()
@@ -76,7 +79,7 @@ export default function Page(){
         await signup(body).unwrap()
         .then((payload) => {
             saveToken({access_token:payload.access_token,refresh_token:payload.refresh_token})
-            router.push("/")
+            location.reload()
         }).catch((err) => {
             toast({
                 title: "ERROR",
@@ -192,3 +195,4 @@ export default function Page(){
 
     </div>)
 }
+

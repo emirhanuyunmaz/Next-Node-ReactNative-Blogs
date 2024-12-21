@@ -9,6 +9,7 @@ import {
     FormMessage,
   } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
+import { useGetUserProfileQuery } from "@/lib/store/user/userApi";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Camera, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
@@ -37,6 +38,9 @@ const formSchema = z.object({
 
 export default function Page(){
 
+    const userProfile = useGetUserProfileQuery("")
+    console.log(userProfile);
+    
     const [passwordVisible,setPasswordVisible] =useState(false)
     
       const form = useForm<z.infer<typeof formSchema>>({
@@ -141,4 +145,4 @@ export default function Page(){
 
                     </div>
     </div>)
-} 
+}

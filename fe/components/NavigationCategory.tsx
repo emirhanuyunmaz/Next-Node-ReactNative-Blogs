@@ -16,28 +16,28 @@ export default function NavigationCategory(){
             <NavigationMenuItem>
             <NavigationMenuTrigger>Category</NavigationMenuTrigger>
             <NavigationMenuContent>
-                <NavigationMenuLink>
-                <Link href={"/asd"}>
+                <NavigationMenuLink href="/asd" >
+                
                     Tecnology
-                </Link>
+                
                 </NavigationMenuLink>
 
                 <NavigationMenuLink>
-                <Link href={"/asd"}>
+                
                     Tecnology
-                </Link>
+                
+                </NavigationMenuLink>
+
+                <NavigationMenuLink  >
+                
+                    Tecnology
+                
                 </NavigationMenuLink>
 
                 <NavigationMenuLink>
-                <Link href={"/asd"}>
+                
                     Tecnology
-                </Link>
-                </NavigationMenuLink>
-
-                <NavigationMenuLink>
-                <Link href={"/asd"}>
-                    Tecnology
-                </Link>
+                
                 </NavigationMenuLink>
             </NavigationMenuContent>
             </NavigationMenuItem>

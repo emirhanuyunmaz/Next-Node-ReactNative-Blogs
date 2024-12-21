@@ -1,5 +1,4 @@
 import express, { Request, Response , Application } from 'express';
-import * as jwt from "jsonwebtoken"
 import AuthModels from './model';
 import JWT from '../@util/jwt';
 const router = express.Router()
