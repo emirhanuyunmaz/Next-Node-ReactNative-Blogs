@@ -11,6 +11,8 @@ interface UserModel{
     isGoogle:Boolean,
     contrat:Boolean,
     createAt:Date,
+    birthDay:Date,
+    address:String
 }
 
 const userSchema = new Schema<UserModel>({
@@ -21,6 +23,8 @@ const userSchema = new Schema<UserModel>({
     profileImage:String,
     isGoogle:Boolean,
     contrat:Boolean,
+    birthDay:Date,
+    address:String,
     createAt:{
         type:Date,
         default:Date.now()

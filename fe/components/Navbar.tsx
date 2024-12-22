@@ -26,7 +26,6 @@ export default function Navbar(){
         </div>
         <div className="hidden md:flex gap-3 text-gray-600" >
             <Link href={`/`} className="hover:text-black transition-all" >Home</Link>
-            <Link href={`/blog`}  className="hover:text-black transition-all" >Blog</Link>
             <NavigationCategory/>
             <Link href={`/about`}  className="hover:text-black transition-all" >About</Link>
             <Link href={`/contact`}  className="hover:text-black transition-all" >Contact</Link>

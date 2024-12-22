@@ -1,4 +1,5 @@
 'use client'
+import { DatePicker } from "@/components/DatePicker";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -9,11 +10,13 @@ import {
     FormMessage,
   } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
-import { useGetUserProfileQuery } from "@/lib/store/user/userApi";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { useGetUserProfileQuery, useUpdateUserProfileMutation } from "@/lib/store/user/userApi";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Camera, Eye, EyeOff } from "lucide-react";
+import { Camera } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -26,51 +29,70 @@ const formSchema = z.object({
         message: "Last Name must be at least 2 characters.",
     }),
 
-    email: z.string().min(5, {
-        message: "Email must be at least 5 characters.",
-    }),
+    email: z.string(),
 
-    password: z.string().min(5, {
-        message: "Password must be at least 5 characters.",
-    }),
   })
 
 
 export default function Page(){
-
+    const {toast} = useToast()
     const userProfile = useGetUserProfileQuery("")
-    console.log(userProfile);
-    
-    const [passwordVisible,setPasswordVisible] =useState(false)
-    
-      const form = useForm<z.infer<typeof formSchema>>({
+    const [updateProfile,setUpdateProfile] = useUpdateUserProfileMutation() 
+    // console.log("DD:",userProfile.data?.data,userProfile.isSuccess);
+    const [image,setImage] = useState(userProfile.isSuccess ?userProfile.data?.data.profileImage : "/images/default_user.jpg")
+    const [birthDay,setBirthDay] = useState<Date>()
+    const [address,setAddress] = useState("")
+    const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-          firstName: "",
-          lastName: "",
-          email:"",
-          password: "",
+            firstName: userProfile.isSuccess ? userProfile.data?.data.firstName : "",
+            lastName: userProfile.isSuccess ? userProfile.data?.data.lastName : "",
+            email:userProfile.isSuccess ? userProfile.data?.data.email : "",
         },
-      })
+    })
      
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        const body = {
+            ...values,
+            birthDay:birthDay,
+            address:address,
+        }
+        // console.log("OnSubmit",values);
+        await updateProfile(body).unwrap().then(() => {
+            toast({
+                title:"Update Succes",
+                variant:"default"
+            })
+        }).catch((err) => {
+            console.log("ERR:",err);
             
-        
-      }
+            toast({
+                title:"ERROR ",
+                variant:"destructive"
+            })
+        })
+    }
+
+    useLayoutEffect(() => {
+        if(userProfile.isSuccess){
+            form.setValue("firstName",userProfile.data?.data.firstName)
+            form.setValue("lastName",userProfile.data?.data.lastName)
+            form.setValue("email",userProfile.data?.data.email)
+            setImage(userProfile.data?.data.profileImage)
+            setAddress(userProfile.data?.data.address)
+            setBirthDay(userProfile.data?.data.birthDay)
+        }
+    },[userProfile.isSuccess,userProfile.error,userProfile.isFetching])
 
 
     return(<div className="min-h-[85vh] max-w-5xl mx-auto">
         <div className="flex flex-col gap-3">
             <div className="flex gap-3">
                 <div className="relative w-32 h-32 rounded-full hover:shadow-2xl cursor-pointer transition-all">
-                    <Image loader={() => "https://picsum.photos/seed/picsum/1200/800"} src={"https://picsum.photos/seed/picsum/1200/800"} layout="fill"  alt="User Images" className="rounded-full" />
+                    <Image loader={() => `${image}`} src={`${image}`} layout="fill"  alt="User Images" className="rounded-full" />
                     <Camera className="absolute bottom-0 -right-3" />
                 </div>
-                <div className="flex flex-col justify-center">
-                    <p>User Name</p>
-                    <p>user@gmail.com</p>
-                </div>
+                
             </div>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
@@ -106,38 +128,22 @@ export default function Page(){
                 <FormField
                     control={form.control}
                     name="email"
+                    
                     render={({ field }) => (
                         <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                            <Input placeholder="Email" {...field} className="w-full border-black" />
+                            <Input disabled placeholder="Email" {...field} className="w-full border-black" />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
                     )}
                     />
-
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                            <div className="flex items-center border rounded-md border-black px-1">
-                                <Input placeholder="Password" type={`${!passwordVisible && "password"}`} {...field} className="w-full border-none" />
-                                {
-                                    passwordVisible ? <button onClick={(e) => {e.preventDefault();setPasswordVisible(false)}} ><EyeOff size={24} /></button> :<button onClick={(e) => {e.preventDefault();setPasswordVisible(true)}} ><Eye size={24} /></button>
-                                }
-                            </div>
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-
-                    
-
+                    <div className="flex gap-3">
+                        <DatePicker date={birthDay as Date} setDate={setBirthDay} title={`Birth Day`} />
+                        <Input onChange={(e) => setAddress(e.target.value)} value={address} placeholder="Address" className="border-primary" />
+                    </div>
+                
                 <Button className="" type="submit">Update</Button>
             </form>
             </Form>
