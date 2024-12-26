@@ -1,12 +1,12 @@
 'use client'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import MDEditor from '@uiw/react-md-editor';
 import { Camera } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { TagInput } from 'emblor';
 import ImageUploading from 'react-images-uploading';
-import { useAddBlogMutation } from '@/lib/store/blog/blogApi'
+import { useAddBlogMutation, useGetCategoriesQuery } from '@/lib/store/blog/blogApi'
 import { useToast } from '@/hooks/use-toast'
 import {
     Select,
@@ -15,11 +15,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { useRouter } from 'next/navigation';
 
 
 export default function Page() {
     const { toast } = useToast()
+    const router = useRouter()
     const [addBlog, responseAddBlog] = useAddBlogMutation()
+    const getCategories = useGetCategoriesQuery("")
 
     const [images, setImages] = useState<any>([]);
     const maxNumber = 1;
@@ -28,6 +31,7 @@ export default function Page() {
     const [tags, setTags] = useState<any>([])
     const [title, setTitle] = useState("")
     const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+    const [categories,setCategories] = useState([])
 
     const onChange = (imageList: any, addUpdateIndex: any) => {
         // data for submit
@@ -46,6 +50,8 @@ export default function Page() {
             })
 
         } else {
+            console.log("BLOG TEXT:",blogText);
+            
             const body = {
                 title: title,
                 image: images[0].data_url,
@@ -54,11 +60,29 @@ export default function Page() {
                 category:selectCategory
             }
 
-            const res = await addBlog(body)
+            const res = await addBlog(body).unwrap()
+            .then(() => {
+                toast({
+                    title:"Succes"
+                })
+                // router.push("/")
+            })
+            .catch((err) => {
+                toast({
+                    title:"ERROR ",
+                    description:"Try again"
+                })
+            })
             console.log("ADD RES :", res);
         }
 
     }
+
+    useEffect(() => {
+        if(getCategories.isSuccess){
+            setCategories(getCategories.data.data)
+        }
+    },[getCategories.isFetching])
 
     return (<div className="max-w-7xl min-h-[85vh] mx-auto">
         <div className='mx-3 md:mx-0 flex flex-col md:flex-row gap-3'>
@@ -128,9 +152,10 @@ export default function Page() {
                                 <SelectValue placeholder="Category" />
                             </SelectTrigger>
                             <SelectContent >
-                                <SelectItem value="Category 1">Category 1</SelectItem>
-                                <SelectItem value="Category 2">Category 2</SelectItem>
-                                <SelectItem value="Category 3">Category 3</SelectItem>
+                                {
+                                    categories.map((item :any) => <SelectItem key={item._id} value={`${item?.name}`}>{item?.name}</SelectItem> )
+                                }
+                                
                             </SelectContent>
                         </Select>
                     </div>
@@ -139,7 +164,7 @@ export default function Page() {
                 <MDEditor
                     className='!min-h-[50vh]'
                     value={blogText}
-                    onChange={setBlogText}
+                    onChange={(e) => setBlogText(e)}
                 />
             </div>
         </div>

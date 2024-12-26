@@ -1,3 +1,4 @@
+'use client'
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -8,37 +9,35 @@ import {
     NavigationMenuTrigger,
     NavigationMenuViewport,
   } from "@/components/ui/navigation-menu"
+import { useGetCategoriesQuery } from "@/lib/store/blog/blogApi"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 export default function NavigationCategory(){
-    return(<div className="flex">
+    const getCategories = useGetCategoriesQuery("")
+    const [categories,setCategories] = useState([])
+    useEffect(() => {
+        if(getCategories.isSuccess){
+            setCategories(getCategories.data.data)
+        }
+    },[getCategories.isFetching])
+
+    return(<div className="flex ">
         <NavigationMenu>
         <NavigationMenuList>
             <NavigationMenuItem>
             <NavigationMenuTrigger>Category</NavigationMenuTrigger>
             <NavigationMenuContent>
-                <NavigationMenuLink href="/asd" >
+                {
+                    categories.map((item:any) =><NavigationMenuLink key={item._id} href={`/category/${item.slug}`} >
+                    <p className="hover:underline transition-all">
+                        {item.name}
+                    </p>
                 
-                    Tecnology
-                
-                </NavigationMenuLink>
+                </NavigationMenuLink> )
+                }
 
-                <NavigationMenuLink>
-                
-                    Tecnology
-                
-                </NavigationMenuLink>
 
-                <NavigationMenuLink  >
                 
-                    Tecnology
-                
-                </NavigationMenuLink>
-
-                <NavigationMenuLink>
-                
-                    Tecnology
-                
-                </NavigationMenuLink>
             </NavigationMenuContent>
             </NavigationMenuItem>
         </NavigationMenuList>

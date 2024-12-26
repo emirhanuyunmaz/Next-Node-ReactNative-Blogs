@@ -88,14 +88,14 @@ export default function Page(){
 
     return(<div className="min-h-[85vh] max-w-7xl flex mx-auto gap-5 mt-3">
         
-        <div className="w-1/2 flex justify-center items-center">
+        <div className="hidden md:w-1/2 md:flex justify-center items-center">
             <div className="relative w-full h-full">
                 <Image src={`/images/signup.png`} alt="Sign Up Image" layout="fill" className="" />
             </div>
             
         </div>
 
-        <div className="w-1/2 flex flex-col gap-3 justify-center">
+        <div className="w-full md:w-1/2 flex flex-col gap-3 justify-center mx-3 md:mx-0">
             <h2 className="text-3xl font-bold">Sign Up</h2>
             <p className="text-primary ms-3">Let's get you all set up so you can access your personal account.</p>
             <Form {...form}>

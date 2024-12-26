@@ -1,6 +1,7 @@
 import { getCookie } from 'cookies-next'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+// import { useGetSingleBlogQuery } from './lib/store/blog/blogApi'
  
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
@@ -21,10 +22,21 @@ export function middleware(request: NextRequest) {
         
         return NextResponse.redirect(new URL('/',request.url))
     }
+
+    // if(url_data.pathname.includes("/blogDetail")){
+    //     // console.log("TOKKKKKKEEENN:",access_token === undefined);
+    //     // console.log("URKLLL::",request.url);
+    //     console.log("::BLOG DETAİL::",request.url.split("/")[4]);
+    //     const data = useGetSingleBlogQuery(request.url.split("/")[4])
+    //     // console.log(data);
+        
+    //     return NextResponse.next()    
+    //     // return NextResponse.redirect(new URL('/login',request.url))
+    // }
     return NextResponse.next()
 }
  
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/profile','/addBlog','/signup','/login']
+  matcher: ['/profile','/addBlog','/signup','/login','/blogDetail/:name*']
 }

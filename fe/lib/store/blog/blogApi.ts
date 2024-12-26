@@ -18,11 +18,23 @@ export const blogApi = createApi({
 
     getUserBlogs: builder.query<any , any>({
       query: () => `/getBlogs`,
-  }),
+    }),
+
+    getCategories: builder.query<any , any>({
+      query: () => `/getCategories`,
+    }),
+
+    getSingleBlog: builder.query<any , any>({
+      query: (name) => `/getCategories/${name}`,
+    }),
+
+    getCategoryBlogs : builder.query<any,any>({
+      query:(category) => `/getCategoryBlogs/${category}`
+    }),
 
   }),
 })
 
 
-export const { useAddBlogMutation,useGetUserBlogsQuery } = blogApi
+export const { useAddBlogMutation,useGetUserBlogsQuery,useGetCategoriesQuery,useGetSingleBlogQuery,useGetCategoryBlogsQuery } = blogApi
 
