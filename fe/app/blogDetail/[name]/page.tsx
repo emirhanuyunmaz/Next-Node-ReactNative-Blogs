@@ -23,17 +23,14 @@ interface Blogs {
 async function getPost(id: string) {
     const res = await fetch(`http://localhost:8000/blog/getBlog/${id}`)
     const post: Blogs = await res.json()
-    // if (!post) 
-    // console.log(post.data);
-    
     return post.data
-  }
+}
 
 export default async function Page({params}:any){
     const {name} = await params
     const data = await getPost(name)
     
-    console.log("DATA:",data);
+    // console.log("DATA:",data);
     
     return(<div className="max-w-7xl  mx-auto min-h-[80vh] mt-5">
             <div className="w-3/4 mx-auto flex flex-col gap-3" >

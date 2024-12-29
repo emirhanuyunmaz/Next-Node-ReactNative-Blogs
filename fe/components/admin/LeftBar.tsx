@@ -36,7 +36,7 @@ export default function LeftBar ({path}:LetfBar){
             <NotebookTabs />
             <Link href={`/admin/home/contact`} >Contact</Link>
         </li>
-        <li  className={`flex w-full gap-2 ${path == "about" && "bg-primary "} hover:bg-primary hover:text-white px-2 py-2 rounded-xl transition-all`}>
+        <li  className={`flex w-full gap-2 ${path == "about" && "bg-primary text-white"} hover:bg-primary hover:text-white px-2 py-2 rounded-xl transition-all`}>
             <Text />
             <Link href={`/admin/home/about`} >About</Link>
         </li>

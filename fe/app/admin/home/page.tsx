@@ -1,15 +1,16 @@
 'use client'
 import BlogList from "@/components/admin/home/BlogList";
 import CarouselImage from "@/components/admin/home/CarouselImage";
+import { useHomeCarouselImageAddMutation } from "@/lib/store/admin/adminApi";
 import { GalleryHorizontal, StickyNote } from "lucide-react";
 import { useState } from "react";
 
 
-export default function Page(){
-    
-   
+export default function Page(){    
     
     const [select,setSelect] = useState(0)
+
+    
 
     return(<div>
         <h1 className="text-xl font-bold ms-10">

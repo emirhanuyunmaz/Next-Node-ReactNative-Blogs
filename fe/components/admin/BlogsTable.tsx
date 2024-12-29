@@ -35,45 +35,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { BlogUpdateDialog } from "./BlogUpdateDialog"
+import Link from "next/link"
+import { useDeleteBlogMutation } from "@/lib/store/admin/adminApi"
 
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@yahoo.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-]
+export type Writer = {
+  _id:String,
+  firstName:String,
+  lastName:String,
+}
 
+export type Category = {
+  _id:String,
+  name:String
+}
 export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
+  _id: string
+  title:String
+  category:Category
+  writer: Writer,
+  slug:String
 }
 
 export const columns: ColumnDef<Payment>[] = [
@@ -99,41 +80,36 @@ export const columns: ColumnDef<Payment>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+  
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
+    accessorKey: "title",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Title
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("title")}</div>,
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: "category",
+    header: "Category",
+    cell: ({row}) => {
+      const {name} = row.getValue("category") as Category
+      return (<div className="capitalize">{name}</div>)
+    },
+  },
+  {
+    accessorKey: "writer",
+    header: "Writer",
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
+      const {firstName,lastName} =row.getValue("writer")! as Writer
+      return (<div className="capitalize">{`${firstName} ${lastName}`}</div>)
     },
   },
   {
@@ -141,7 +117,7 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const payment = row.original
-
+      const [deleteBlog,resDeleteBlog] = useDeleteBlogMutation()
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -153,13 +129,14 @@ export const columns: ColumnDef<Payment>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(payment._id)}
             >
-              Copy payment ID
+              Copy ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => deleteBlog({id:payment._id})} >Delete</DropdownMenuItem>
+            <DropdownMenuItem><Link href={`/admin/home/blogs/detail/${payment._id}`}>Update</Link></DropdownMenuItem>
+            <DropdownMenuItem ><Link href={`/blogDetail/${payment.slug}`} >Show Page</Link></DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -167,7 +144,7 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ]
 
-export function BlogsTable() {
+export function BlogsTable({data}:{data:[]}) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -199,10 +176,10 @@ export function BlogsTable() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter title"
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("title")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

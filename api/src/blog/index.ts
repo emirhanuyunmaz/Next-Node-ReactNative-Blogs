@@ -44,18 +44,17 @@ const getCategoryBlogs = async(req:Request,res:Response) => {
         console.log("Category Name Blog listesi :");
         
         const categoryName = req.params["categoryName"]
-        console.log(categoryName);
+        // console.log(categoryName);
         
         const category = await Blogs.Category.find({slug:categoryName})
         // console.log("CATE",category);
         
         const data = await Blogs.Blog.find({category:category[0]._id}).populate("writer","firstName lastName profileImage ").populate("category","name")
-        console.log("DATA:",data);
+        // console.log("DATA:",data);
         
         res.status(200).json({succes:true , data:data})
     }catch(err){
         console.log("Kategori Blog listesi çekilirken bir hata ile karşılaşşıld.",err);
-        
         res.status(404).json({message:err,succes:false})
     }
 }
@@ -148,7 +147,7 @@ const getImage = async(req:Request,res:Response) => {
 
 router.route("/addBlog").post(authControl,addBlog)
 router.route("/getBlog/:name").get(getSingleBlog)
-router.route("/addCategory").post(authControl,addCategory)
+router.route("/addCategory").post(addCategory)
 router.route("/getCategories").get(getCategories)
 router.route("/getCategoryBlogs/:categoryName").get(getCategoryBlogs)
 router.route("/getBlogs").get(authControl,getUserBlogList)
