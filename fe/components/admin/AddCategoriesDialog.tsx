@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -11,10 +10,12 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { toast } from "@/hooks/use-toast"
 import { useAddCategoryMutation, useUpdateCategoryMutation } from "@/lib/store/admin/adminApi"
 import { useState } from "react"
 
 export function AddCategoriesDialog({isUpdate=false,data=undefined}:{isUpdate:boolean,data:any}) {
+  const [control,setControl] = useState(false)
   const [addCategory,resAddCategory] = useAddCategoryMutation()
   const [updateCategory,setUpdateCategory] = useUpdateCategoryMutation()
   const [categoryText,setCategoryText] = useState(data ? data.name : "")
@@ -25,21 +26,41 @@ export function AddCategoriesDialog({isUpdate=false,data=undefined}:{isUpdate:bo
       const body = {
         category:categoryText
       }
-      await addCategory(body)
+      await addCategory(body).unwrap().then(() => {
+        toast({
+          title:"Succes add category"
+        })
+        setControl(false)
+      }).catch((Err) => {
+        toast({
+          title:"Error"
+        })
+        setControl(false)
+      })
     }else{
       const body = {
         id:data._id,
         category:categoryText
       }
-      await updateCategory(body)
+      await updateCategory(body).unwrap().then(() => {
+        toast({
+          title:"Succes update category"
+        })
+        setControl(false)
+      }).catch((Err) => {
+        toast({
+          title:"Error"
+        })
+        setControl(false)
+      })
     }
   }
   
 
   return (
-    <Dialog  >
+    <Dialog open={control} onOpenChange={setControl} >
       <DialogTrigger asChild>
-        {!isUpdate ? <Button >Add Category</Button>:<button>Update</button>}
+        <Button variant={`${isUpdate ? "secondary" :"default"}`} className={`${isUpdate && "px-0 py-0"}`} onClick={() => setControl(true)}>{!isUpdate ? "Add Category" : "Update"}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

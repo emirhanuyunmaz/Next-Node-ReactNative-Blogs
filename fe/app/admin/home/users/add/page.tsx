@@ -3,13 +3,16 @@ import { DatePicker } from "@/components/DatePicker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/hooks/use-toast";
 import { useAddUserMutation } from "@/lib/store/admin/adminApi";
 import { getBase64 } from "@/lib/utils";
 import { ImageUp } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 
 export default function Page(){
+    const router = useRouter()
     const [addUser,resAddUser] = useAddUserMutation()
 
     const [firstName,setFirstName] = useState<String>("")
@@ -38,7 +41,12 @@ export default function Page(){
             isGoogle:false,
             address:address
         }
-        await addUser(body)
+        await addUser(body).unwrap().then(() => {
+            toast({
+                title:"User Add Succes"
+            })
+            router.push("/admin/home/users/")
+        })
 
     }
 
@@ -72,7 +80,7 @@ export default function Page(){
                     <Textarea value={address as string} onChange={(e) => setAddress(e.target.value)} placeholder="Address" />
                 </div>
                 <div>
-                    <Button onClick={addUserHandleClick} className="w-full">Update</Button>
+                    <Button onClick={addUserHandleClick} className="w-full">Save</Button>
                 </div>
             </div>
 

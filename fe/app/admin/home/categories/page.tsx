@@ -1,20 +1,23 @@
 'use client'
 import { AddCategoriesDialog } from "@/components/admin/AddCategoriesDialog";
 import { CategoryTable } from "@/components/admin/CategoryTable";
-import { useGetCategoriesQuery } from "@/lib/store/blog/blogApi";
+import { useGetCategoryQuery } from "@/lib/store/admin/adminApi";
 import { useEffect, useState } from "react";
 
 
 export default function Page(){
-    const getCategories = useGetCategoriesQuery([])
+    const getCategories = useGetCategoryQuery("")
     const [data,setData] = useState<any>([])
-
+    // console.log("DATA CATE::",getCategories.data);
+    
     useEffect(() => {
+        console.log("YENİDEN ÇEKME İŞLEMİ");
+        
         if(getCategories.isSuccess){
             setData(getCategories.data.data)
         }
         
-    },[getCategories.isFetching])
+    },[getCategories])
 
     
 

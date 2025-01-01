@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/table"
 import { useDeleteCategoryMutation } from "@/lib/store/admin/adminApi"
 import { AddCategoriesDialog } from "./AddCategoriesDialog"
+import { toast } from "@/hooks/use-toast"
 
 
 export type Payment = {
@@ -96,6 +97,22 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => {
       const payment = row.original
       const [deleteCategory,resDeleteCategory] = useDeleteCategoryMutation()
+      async function deleteHandleClick(id:string){
+        console.log("..silme işlemi ..");
+        
+        await deleteCategory({id:id}).unwrap().then(() => {
+          toast({
+            title:"Delete Category Succes"
+          })
+        }).catch(() => {
+          toast({
+            title:"Error"
+          })
+        })
+        console.log("..silme işlemi .. ::Başarı::");
+
+      }
+
 
       return (
         <DropdownMenu>
@@ -113,7 +130,7 @@ export const columns: ColumnDef<Payment>[] = [
               Copy ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem  onClick={() => deleteCategory({id:payment._id})}>Delete</DropdownMenuItem>
+            <DropdownMenuItem  onClick={() => deleteHandleClick(payment._id)}>Delete</DropdownMenuItem>
             <DropdownMenuItem onClick={e => e.preventDefault()} >{<AddCategoriesDialog data={payment} isUpdate={true} />}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

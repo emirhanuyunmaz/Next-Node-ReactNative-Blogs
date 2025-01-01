@@ -82,8 +82,9 @@ const homeCarouselDeleteImage = async(req:Request,res:Response) => {
         console.log("Resim id bilgisi:",imageId);
         const image = await AdminModels.HomeCarousel.findByIdAndDelete(imageId)
         await deleteImage({imageName:image!.imageName})
-        res.status(204)
+        res.status(201).json({succes:true})
     }catch(err){
+        console.log("Home resim silme işleminde hata .",err);
         res.status(404).json({message:err,succes:false})
     }
 }
@@ -254,7 +255,7 @@ const deleteUser = async (req:Request,res:Response) => {
         const id = req.params["id"]
         const user = await AuthModels.User.findByIdAndDelete(id)
         await deleteImage({imageName:user!.profileImage})
-        res.status(204)
+        res.status(201).json({succes:true})
     }catch(err){
         console.log("Kullanıcı silinirken bir hata ile karşılaşıldı.",err)
         res.status(404).json({message:err,succes:false})
@@ -339,13 +340,11 @@ const updateBlogImage = async(req:Request,res:Response) => {
 // Kayıtlı bir blog silme işlemi.
 const deleteBlog = async(req:Request,res:Response) => {
     try{
-        console.log("Blog silme işlemi. ",req.body);
-        console.log("***************************");
         const id = req.body["id"]
         const blogData = await Blogs.Blog.findById(id)
         await deleteImage({imageName:blogData!.image})
         await Blogs.Blog.findByIdAndDelete(id)
-        res.status(204)
+        res.status(201).json({succes:true})
     }catch(err){
         console.log("Blog silme işlemi yapılırken bir hata ile karşılaşıldı.",err);
         res.status(404).json({message:err,succes:false})
@@ -375,11 +374,12 @@ const addCategory = async(req:Request,res:Response) => {
 //Kategori düzenleme işlemi.
 const updateCategory = async(req:Request,res:Response) => {
     try{
+        console.log("kategory ekleme işlemi.");
+        
         const categoryId = req.body["id"]
         const category = req.body["category"]
         const categorySlug = slugify(category,"-") 
         await Blogs.Category.findByIdAndUpdate(categoryId,{name:category,slug:categorySlug})
-        
         res.status(201).json({succes:true})
     }catch(err) {
         console.log("Kategori eklerken bir hata ile karşılaşıldı.");
@@ -397,7 +397,7 @@ const deleteCategory = async(req:Request,res:Response) => {
         console.log(categoryId);
         
         await Blogs.Category.findByIdAndDelete(categoryId)
-        res.status(204)
+        res.status(201).json({succes:false})
     }catch(err) {
         console.log("Kategori eklerken bir hata ile karşılaşıldı.");
         res.status(404).json({message:err,succes:false})
@@ -408,6 +408,8 @@ const deleteCategory = async(req:Request,res:Response) => {
 // Kategori listesinin çekilmesi işlemi.
 const getCategories = async (req:Request,res:Response) => {
     try{
+        console.log(".Tüm kategory listesi .");
+        
         const data = await Blogs.Category.find()
         res.status(200).json({succes:true,data:data})
     }catch(err){

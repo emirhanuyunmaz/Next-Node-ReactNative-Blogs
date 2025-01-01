@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/table"
 import Link from "next/link"
 import { useDeleteUserMutation } from "@/lib/store/admin/adminApi"
+import { useToast } from "@/hooks/use-toast"
 
 export type Payment = {
   _id: string
@@ -44,6 +45,8 @@ export type Payment = {
   lastName:string,
   email: string
 }
+
+
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -101,8 +104,10 @@ export const columns: ColumnDef<Payment>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+      const {toast} = useToast()
       const [deleteUser,resDeleteUser] = useDeleteUserMutation()
+      
+      const payment = row.original
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -120,7 +125,7 @@ export const columns: ColumnDef<Payment>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem><Link href={`/admin/home/users/detail/${payment._id}`} >Update</Link></DropdownMenuItem>
-            <DropdownMenuItem onClick={() => deleteUser(payment._id)} >Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={async(e) => {e.preventDefault();await deleteUser(payment._id).unwrap().then(() => {toast({title:"Succes Delete User"})})}} >Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

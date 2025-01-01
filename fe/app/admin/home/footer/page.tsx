@@ -18,7 +18,7 @@ export default function Page(){
     }
 
     useEffect(() => {
-        if(getFooterData.isSuccess){
+        if(getFooterData.isSuccess && getFooterData.data.data){
             setFooterText(getFooterData.data.data.text)
         }
     },[getFooterData.isFetching])

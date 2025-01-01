@@ -10,7 +10,7 @@ const app:Application = express()
 dotenv.config() //.env dosyası için gerekli
 
 app.use(cors())
-app.use(express.json()) //Gelen verileri json formatinda alınabilmesini sağlar.
+app.use(express.json({limit:"50mb"})) //Gelen verileri json formatinda alınabilmesini sağlar.
 app.use('/uploads', express.static('uploads'))
 
 

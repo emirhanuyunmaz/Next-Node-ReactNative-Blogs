@@ -8,12 +8,12 @@ export default function Page(){
     const [updateContact,setUpdateContact] = useUpdateContactMutation()
     const getCotact = useGetContactQuery("")
 
-    const [phoneNumber,setPhoneNumber] = useState("")
-    const [email,setEmail] = useState("")
-    const [location,setLocation] = useState("")
-    const [twitterUrl,setTwitterUrl] = useState("")
-    const [instagramUrl,setInstagramUrl] = useState("")
-    const [facebookUrl,setFacebookUrl] = useState("")
+    const [phoneNumber,setPhoneNumber] = useState<string >("")
+    const [email,setEmail] = useState<string >("")
+    const [location,setLocation] = useState<string >("")
+    const [twitterUrl,setTwitterUrl] = useState<string >("")
+    const [instagramUrl,setInstagramUrl] = useState<string >("")
+    const [facebookUrl,setFacebookUrl] = useState<string >("")
 
     async function UpdateOnClick(){
         const body ={
@@ -29,13 +29,13 @@ export default function Page(){
     }
 
     useEffect(() => {
-        if(getCotact.isSuccess){
-            setPhoneNumber(getCotact.data.data.phoneNumber)
-            setEmail(getCotact.data.data.email)
-            setLocation(getCotact.data.data.location)
-            setTwitterUrl(getCotact.data.data.twitterUrl)
-            setInstagramUrl(getCotact.data.data.instagramUrl)
-            setFacebookUrl(getCotact.data.data.facebookUrl)
+        if(getCotact.isSuccess && getCotact.data.data){
+            setPhoneNumber(getCotact.data.data?.phoneNumber)
+            setEmail(getCotact.data.data?.email)
+            setLocation(getCotact.data.data?.location)
+            setTwitterUrl(getCotact.data.data?.twitterUrl)
+            setInstagramUrl(getCotact.data.data?.instagramUrl)
+            setFacebookUrl(getCotact.data.data?.facebookUrl)
         }
     },[getCotact.isFetching])
 

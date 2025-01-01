@@ -22,8 +22,8 @@ export default function BlogList(){
     useEffect(() => {
         if(getHomePageInfo.isSuccess){
             console.log(getHomePageInfo.data.data);
-            setTitle(getHomePageInfo.data.data[0].title ? getHomePageInfo.data.data[0].title : "")
-            setPiece(getHomePageInfo.data.data[0].piece ? getHomePageInfo.data.data[0].piece : 0)
+            setTitle(getHomePageInfo.data.data[0]?.title ? getHomePageInfo.data.data[0].title : "")
+            setPiece(getHomePageInfo.data.data[0]?.piece ? getHomePageInfo.data.data[0].piece : 0)
         }
     },[getHomePageInfo.isFetching])
 

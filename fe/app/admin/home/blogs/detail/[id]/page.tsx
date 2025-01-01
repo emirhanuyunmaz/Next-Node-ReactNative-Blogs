@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useToast } from "@/hooks/use-toast"
 import { useUpdateBlogMutation,useGetSingleBlogQuery, useUpdateBlogImageMutation } from "@/lib/store/admin/adminApi"
 import { useGetCategoriesQuery } from "@/lib/store/blog/blogApi"
 import { getBase64 } from "@/lib/utils"
@@ -29,6 +30,7 @@ import { useEffect, useState } from "react"
 // }
 
 export default function Page(){
+    const {toast} = useToast()
     const {id} = useParams()
     const getSingleBlog = useGetSingleBlogQuery(id)
     const [updateBlog,reqUpdateBlog] = useUpdateBlogMutation()
@@ -44,6 +46,8 @@ export default function Page(){
     const [blogText,setBlogText] = useState<String>()
 
     async function UpdateBlogOnClick(){
+        console.log(":Gğncelleme :");
+        
         const body = {
             id:id,
             title:title,
@@ -51,7 +55,20 @@ export default function Page(){
             tags:tags,
             blogText:blogText
         }
-        await updateBlog(body)
+        await updateBlog(body).unwrap().then(() => {
+            console.log(":Başarı :");
+            
+            toast({
+                title:"Update Succes"
+            })
+        }).catch((err) => {
+            console.log(":Başarı :");
+            
+            toast({
+                title:"Error"
+            })
+        })
+
     }
     
     async function UpdateImageOnClick(e:any){
@@ -61,7 +78,15 @@ export default function Page(){
             id:id,
             image:base64Image
         }
-        await updateBlogImage(body)
+        await updateBlogImage(body).unwrap().then(() => {
+            toast({
+                title:"Update Succes"
+            })
+        }).catch((err) => {
+            toast({
+                title:"Error"
+            })
+        })
     }
 
     useEffect(() => {

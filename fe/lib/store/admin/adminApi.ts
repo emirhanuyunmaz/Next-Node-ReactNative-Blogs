@@ -3,6 +3,7 @@ import { getCookie } from 'cookies-next'
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
+  tagTypes:["blog","user","category","image"],
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000"+"/admin" , headers:{
       access_token:getCookie("access_token") as string
     }}),
@@ -14,6 +15,7 @@ export const adminApi = createApi({
        method:"POST",
        body:body
       }),
+      invalidatesTags:["image"]
     }),
 
     homeCarouselImageUpdate: builder.mutation<any , any>({
@@ -22,6 +24,7 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["image"]
     }),
 
     homeCarouselImageDelete: builder.mutation<any , any>({
@@ -30,10 +33,12 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["image"]
     }),
 
     homeCarouselGetImage: builder.query<any , any>({
       query: () => `/homeCarouselGetImage`,
+      providesTags:["image"]
     }),
 
     homePageGetInfo: builder.query<any , any>({
@@ -50,10 +55,12 @@ export const adminApi = createApi({
 
     getAllUser: builder.query<any , any>({
         query: () => `/getUserList`,
+        providesTags:["user"]
     }),
 
     getSingleUser: builder.query<any , any>({
         query: (id) => `/getSingleUser/${id}`,
+        providesTags:["user"]
     }),
 
     updateUser: builder.mutation<any , any>({
@@ -62,6 +69,7 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["user"]
     }),
 
     updateUserProfileImage: builder.mutation<any , any>({
@@ -70,6 +78,7 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["user"]
     }),
 
     addUser: builder.mutation<any , any>({
@@ -78,6 +87,7 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["user"]
     }),
 
     deleteUser: builder.mutation<any , any>({
@@ -85,14 +95,17 @@ export const adminApi = createApi({
          url: `/deleteUser/${id}`,
          method:"POST",
         }),
+        invalidatesTags:["user"]
     }),
 
     getAllBlogs: builder.query<any , any>({
         query: () => `/getBlogList`,
+        providesTags:["blog"]
     }),
 
     getSingleBlog: builder.query<any , any>({
         query: (id:String) => `/getSingleBlog/${id}`,
+        providesTags:["blog"]
     }),
 
     deleteBlog: builder.mutation<any , any>({
@@ -101,6 +114,7 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["blog"]
     }),
 
     updateBlog: builder.mutation<any , any>({
@@ -109,6 +123,7 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["blog"]
     }),
 
     updateBlogImage: builder.mutation<any , any>({
@@ -117,6 +132,7 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["blog"]
     }),
 
     addCategory: builder.mutation<any , any>({
@@ -125,6 +141,7 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["category"]
     }),
 
     updateCategory: builder.mutation<any , any>({
@@ -133,6 +150,7 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["category"]
     }),
 
     deleteCategory: builder.mutation<any , any>({
@@ -141,10 +159,12 @@ export const adminApi = createApi({
          method:"DELETE",
          body:body
         }),
+        invalidatesTags:["category"]
     }),
 
     getCategory: builder.query<any , any>({
         query: () => `/getCategories`,
+        providesTags:["category"]
     }),
 
     getFooterData: builder.query<any , any>({
@@ -195,4 +215,4 @@ export const adminApi = createApi({
 })
 
 
-export const { useHomeCarouselImageAddMutation,useHomeCarouselGetImageQuery,useHomeCarouselImageUpdateMutation,useHomeCarouselImageDeleteMutation,useHomePageGetInfoQuery,useHomeInfoUpdateMutation,useGetAllUserQuery,useGetSingleUserQuery,useGetAllBlogsQuery ,useAddCategoryMutation ,useDeleteCategoryMutation , useUpdateFooterMutation ,useGetFooterDataQuery ,useUpdateCategoryMutation , useUpdateBlogMutation,useGetSingleBlogQuery,useUpdateBlogImageMutation , useDeleteBlogMutation ,useGetAboutDataQuery,useUpdateAboutMutation,useUpdateAboutImageMutation,useGetContactQuery, useUpdateContactMutation ,useUpdateUserMutation ,useUpdateUserProfileImageMutation , useAddUserMutation,useDeleteUserMutation} = adminApi
+export const { useGetCategoryQuery,useHomeCarouselImageAddMutation,useHomeCarouselGetImageQuery,useHomeCarouselImageUpdateMutation,useHomeCarouselImageDeleteMutation,useHomePageGetInfoQuery,useHomeInfoUpdateMutation,useGetAllUserQuery,useGetSingleUserQuery,useGetAllBlogsQuery ,useAddCategoryMutation ,useDeleteCategoryMutation , useUpdateFooterMutation ,useGetFooterDataQuery ,useUpdateCategoryMutation , useUpdateBlogMutation,useGetSingleBlogQuery,useUpdateBlogImageMutation , useDeleteBlogMutation ,useGetAboutDataQuery,useUpdateAboutMutation,useUpdateAboutImageMutation,useGetContactQuery, useUpdateContactMutation ,useUpdateUserMutation ,useUpdateUserProfileImageMutation , useAddUserMutation,useDeleteUserMutation} = adminApi
