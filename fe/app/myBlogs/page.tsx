@@ -1,5 +1,5 @@
 'use client'
-import BlogCard from "@/components/BlogCard";
+import MyBlogCard from "@/components/MyBlogCard";
 import { useGetUserBlogsQuery } from "@/lib/store/blog/blogApi";
 import { useEffect, useState } from "react";
 
@@ -22,7 +22,7 @@ export default function Page(){
         <div className="flex flex-wrap justify-center  items-center gap-3 mt-3 mx-auto">
             
             {
-                data.map((item:any) => <BlogCard {...item} key={item._id}/>)
+                data.map((item:any) => <MyBlogCard {...item} key={item._id}/>)
             }
             
         </div>

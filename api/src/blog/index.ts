@@ -2,9 +2,10 @@ import express,{Request,Response} from "express"
 import { authControl } from "../middleware/auth";
 import path from "path"
 import slugify from "slugify";
-import { uploadImage } from "../@util";
+import { deleteImage, uploadImage } from "../@util";
 import Blogs from "./model";
 import crypto from "crypto"
+import AdminModels from "../admin/model";
 const markdown = require( "markdown" ).markdown;
 
 const router = express.Router()
@@ -83,7 +84,6 @@ const addBlog = async (req:Request,res:Response) => {
             slug = slug +"-"+ crypto.randomUUID()
         }
 
-
         const newBlog = new Blogs.Blog({
             category:categoryData!._id,
             tags:tags,
@@ -95,6 +95,13 @@ const addBlog = async (req:Request,res:Response) => {
         })
 
         await newBlog.save()
+
+        const newDashboard = new AdminModels.Dashboard({
+            userId:userId,
+            action:"Add Blog",
+        })
+        await newDashboard.save()
+
         res.status(201).json({succes:true})
     }catch(err){
         res.status(404).json({message:err,succes:false})
@@ -124,9 +131,70 @@ const getSingleBlog = async (req:Request,res:Response) => {
         let data = await Blogs.Blog.findOne({slug:blogSlug}).populate("writer","firstName lastName profileImage").populate("category","name")
         data!.blogText = markdown.toHTML( data?.blogText )
         // console.log(data?.blogText);
-        
         res.status(200).json({succes:true,data:data})
     }catch(err){
+        console.log("Blog çekilirken bir hata ile karşılaşıldı.",err);
+        res.status(404).json({message:err,succes:false})
+    }
+}
+
+//*****************USER BLOG UPDATE*************************// 
+// Kullanıcı blog güncelleme işlemi.
+const updateBlog = async(req:Request,res:Response) => {
+    try{
+        const slug = req.body["slug"]
+        console.log("RR:",slug);
+        const blogData = await Blogs.Blog.find({slug:slug})
+        const title = req.body["title"]
+        const tags = req.body["tags"]
+        const category = req.body["category"] 
+        const categoryData = await Blogs.Category.find({name:category})
+        const blogText = req.body["blogText"]
+        await Blogs.Blog.findByIdAndUpdate(blogData[0]._id,{title:title,blogText:blogText,tags:tags,category:categoryData[0]._id,})
+
+        const newDashboard = new AdminModels.Dashboard({
+            userId:blogData[0].writer,
+            action:"Update Blog",
+        })
+        await newDashboard.save()
+        res.status(201).json({succes:true})
+    }catch(err) {
+        console.log("Kullanıcı blog göncelleme işleleminde hata.",err);
+        res.status(404).json({message:err,succes:false})
+    }
+}
+
+//*****************USER GET BLOG UPDATE*************************// 
+// Kullanıcı blog güncelleme işlemi için blog bilgisini alma işlemi.
+const getUpdateBlog = async(req:Request,res:Response) => {
+    try{
+        const blogSlug = req.params["slug"]
+        const data = await Blogs.Blog.findOne({slug:blogSlug}).populate("writer","firstName lastName profileImage").populate("category","name")
+        // console.log(data?.blogText);
+        res.status(200).json({succes:true,data:data})
+    }catch(err) {
+        console.log("Kullanıcı blog göncelleme işleleminde hata.",err);
+        res.status(404).json({message:err,succes:false})
+    }
+}
+
+// **********************DELETE BLOG*******************//
+// Kayıtlı bir blog bilgisini silme işlemi.
+const deleteBlog = async (req:Request,res:Response) => {
+    
+    try{
+        const id = req.params.id
+        const blogData = await Blogs.Blog.findById(id)
+        await deleteImage({imageName:blogData!.image})
+        await Blogs.Blog.findByIdAndDelete(id)  
+        const newDashboard = new AdminModels.Dashboard({
+            userId:blogData!.writer,
+            action:"Delete Blog",
+        })
+        await newDashboard.save()      
+        res.status(201).json({succes:true})
+    }catch(err) {
+        console.log("Blog silinirken bir hata ile karşılaşıldı.",err);
         res.status(404).json({message:err,succes:false})
     }
 }
@@ -146,10 +214,14 @@ const getImage = async(req:Request,res:Response) => {
 
 
 router.route("/addBlog").post(authControl,addBlog)
+router.route("/updateBlog").post(updateBlog)
 router.route("/getBlog/:name").get(getSingleBlog)
+router.route("/deleteBlog/:id").delete(deleteBlog)
 router.route("/addCategory").post(addCategory)
 router.route("/getCategories").get(getCategories)
+router.route("/getUpdateBlog/:slug").get(getUpdateBlog)
 router.route("/getCategoryBlogs/:categoryName").get(getCategoryBlogs)
 router.route("/getBlogs").get(authControl,getUserBlogList)
 router.route("/image/:name").get(getImage)
+
 export default router

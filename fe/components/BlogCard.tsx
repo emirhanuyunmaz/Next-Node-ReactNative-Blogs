@@ -1,6 +1,5 @@
 'use client'
 import Image from "next/image";
-import TicketText from "./TicketText";
 import Link from "next/link";
 
 interface model {

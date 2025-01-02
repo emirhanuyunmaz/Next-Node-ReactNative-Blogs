@@ -27,7 +27,6 @@ export default function Page(){
                 Categories
             </h1>
             <AddCategoriesDialog isUpdate={false} data={undefined} />
-            {/* <Button onClick={() => setCategoryDialogControl(true)} >Add Category</Button> */}
 
         </div>
         <div className="w-[91%] px-10">

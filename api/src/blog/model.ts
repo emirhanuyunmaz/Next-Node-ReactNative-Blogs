@@ -21,7 +21,7 @@ interface BlogModel {
     tags:[],
     writer:String,
     category:String,
-    slug: { type: String, slug: "title" }
+    slug: string
 }
 
 const BlogSchema = new Scheama<BlogModel>({

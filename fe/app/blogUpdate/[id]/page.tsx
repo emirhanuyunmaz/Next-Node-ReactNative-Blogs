@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -11,19 +12,17 @@ import {
   } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/hooks/use-toast"
-import { useUpdateBlogMutation,useGetSingleBlogQuery, useUpdateBlogImageMutation } from "@/lib/store/admin/adminApi"
-import { useGetCategoriesQuery } from "@/lib/store/blog/blogApi"
-import { getBase64 } from "@/lib/utils"
+import { useGetCategoriesQuery, useGetSingleBlogQuery, useGetUpdateBlogQuery, useUpdateBlogMutation } from "@/lib/store/blog/blogApi"
 import MDEditor from "@uiw/react-md-editor"
 import { TagInput } from "emblor"
-import {  ImageUp } from "lucide-react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useToast } from "@/hooks/use-toast"
+
 
 const tagObj = z.object({
     id:z.string().min(1,{
@@ -33,6 +32,7 @@ const tagObj = z.object({
         message:"Require text"
     })
 }) 
+
 
 const formSchema = z.object({
     title: z.string().min(2, {
@@ -52,32 +52,22 @@ const formSchema = z.object({
     }),
 })
 
-// interface BlogModel{
-//     _id:String,
-//     writer:{
-//         _id:String,
-//         firstName:String,
-//         lastName:String,
-//         email:String,
-//     }
-//     title:String,
-//     category:{
-//         _id:String,
-//         name:String
-//     },
-//     tag:[]
-// }
-
-
 
 export default function Page(){
+    const router = useRouter()
     const {toast} = useToast()
-    const {id} = useParams()
-    const getSingleBlog = useGetSingleBlogQuery(id)
-    const [updateBlog,reqUpdateBlog] = useUpdateBlogMutation()
-    const [updateBlogImage,resUpdateBlogImage] = useUpdateBlogImageMutation()
+
+    const {id} =useParams()
+
+    const getBlog = useGetUpdateBlogQuery(id)
+
     const getCategories = useGetCategoriesQuery("")
 
+    const [updateBlog,resUpdateBlog] = useUpdateBlogMutation()
+    
+    const [images, setImages] = useState<any>("");
+    const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+    const [categories,setCategories] = useState([])
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -92,113 +82,50 @@ export default function Page(){
       // 2. Define a submit handler.
       async function onSubmit(values: z.infer<typeof formSchema>) {
         const body = {
-            id :id,
-            ...values 
+            slug:id,
+            ...values
         }
+
         await updateBlog(body).unwrap().then(() => {
-            console.log(":Başarı :");
-            
             toast({
                 title:"Update Succes"
             })
+            // router.
         }).catch((err) => {
-            console.log(":Başarı :");
-            
-            toast({
-                title:"Error"
-            })
+
         })
+
         console.log(values)
       }
-    
-    const [title,setTitle] = useState("")
-    const [categories,setCategories] = useState([])
-    const [selectCategory,setSelectCategory] = useState("")
-    const [tags,setTags] = useState<any>([])
-    const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
-    const [image,setImage] = useState<String>()
-    const [blogText,setBlogText] = useState<String>()
-
-    async function UpdateBlogOnClick(){
-        console.log(":Gğncelleme :");
-        
-        const body = {
-            id:id,
-            title:title,
-            selectCategory:selectCategory,
-            tags:tags,
-            blogText:blogText
-        }
-        await updateBlog(body).unwrap().then(() => {
-            console.log(":Başarı :");
-            
-            toast({
-                title:"Update Succes"
-            })
-        }).catch((err) => {
-            console.log(":Başarı :");
-            
-            toast({
-                title:"Error"
-            })
-        })
-
-    }
-    
-    async function UpdateImageOnClick(e:any){
-        const file = e.target.files[0]
-        const base64Image = await getBase64(file)
-        const body = {
-            id:id,
-            image:base64Image
-        }
-        await updateBlogImage(body).unwrap().then(() => {
-            toast({
-                title:"Update Succes"
-            })
-        }).catch((err) => {
-            toast({
-                title:"Error"
-            })
-        })
-    }
-
-    useEffect(() => {
-        if(getSingleBlog.isSuccess){
-            console.log(getSingleBlog.data.data);
-            setImage(getSingleBlog.data.data.image)
-            form.setValue("title",getSingleBlog.data.data.title)
-            form.setValue("blogText",getSingleBlog.data.data.blogText)
-            form.setValue("category",getSingleBlog.data.data.category.name)
-            form.setValue("tags",getSingleBlog.data.data.tags)
-
-        }
-    },[getSingleBlog.isFetching])
 
     useEffect(() => {
         if(getCategories.isSuccess){
-            console.log(getCategories.data.data);
             setCategories(getCategories.data.data)
         }
     },[getCategories.isFetching])
 
-    return(<div>
-        <div className="w-[91%] mx-10 my-3">
-            <h1 className="text-xl font-bold">Blog Detail</h1>
-        </div>
-        <div className="w-[91%] mx-10">
-            <div className="flex gap-3">
-                <div>
-                    <div className="w-72 h-52 border-2 flex justify-center items-center">
-                        <img src={`${image}`} alt="" />
-                    </div>
-                    <div className="flex justify-around mt-3">
-                        {/* <Button variant={"outline"} ><Trash2 /></Button> */}
-                        <label htmlFor="updateBlogImage" className="border-2 border-primary rounded-xl p-2 hover:opacity-80 transition-all cursor-pointer"><ImageUp /></label>
-                        <input id="updateBlogImage" onChange={(e) => UpdateImageOnClick(e)} hidden type="file" />
-                    </div>
+    useEffect(() => {
+        if(getBlog.isSuccess){
+            console.log("ASDDSA:",getBlog.data);
+            form.setValue("title" ,getBlog.data.data.title)
+            form.setValue("blogText",getBlog.data.data.blogText)
+            form.setValue("category",getBlog.data.data.category.name)
+            form.setValue("tags",getBlog.data.data.tags)
+        }
+    },[getBlog.isFetching])
+
+    return(<div className="max-w-7xl min-h-[85vh] mx-auto">
+        <div className='mx-3 md:mx-0 flex flex-col md:flex-row gap-3'>
+
+            <div className='flex md:w-1/4 flex-row gap-3 justify-center'>
+                <div className='flex  w-full h-52 justify-center items-center border-2'>
+                    <img src="/images/default_user.jpg"/>
                 </div>
-                <div className="w-full flex flex-col gap-3">
+
+            </div>
+
+            <div className='md:w-2/3 flex flex-col gap-3 '>
+                <div className=' flex flex-col gap-3 w-full '>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <FormField
@@ -222,7 +149,7 @@ export default function Page(){
                             <FormItem>
                             <FormLabel className="font-bold">Category</FormLabel>
                             <FormControl>
-                            <Select value={field.value} defaultValue={selectCategory} onValueChange={field.onChange}>
+                            <Select value={field.value}  onValueChange={field.onChange}>
                                 <SelectTrigger >
                                     <SelectValue placeholder="Category" />
                                 </SelectTrigger>
@@ -283,12 +210,14 @@ export default function Page(){
                         <Button className="w-full" type="submit">Update</Button>
                     </form>
                 </Form>
-                        
-                        
-                        {/* <Button onClick={UpdateBlogOnClick} >Update</Button> */}
+                    
                 </div>
-            </div>
 
+                
+            </div>
+        </div>
+        <div className='flex justify-end mt-3 w-full md:pe-32'>
+            {/* <Button onClick={AddBlogOnClick} className=''>ADD BLOG</Button> */}
         </div>
     </div>)
 }

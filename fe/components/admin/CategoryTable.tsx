@@ -131,7 +131,7 @@ export const columns: ColumnDef<Payment>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem  onClick={() => deleteHandleClick(payment._id)}>Delete</DropdownMenuItem>
-            <DropdownMenuItem onClick={e => e.preventDefault()} >{<AddCategoriesDialog data={payment} isUpdate={true} />}</DropdownMenuItem>
+            {<AddCategoriesDialog data={payment} isUpdate={true} />}
           </DropdownMenuContent>
         </DropdownMenu>
       )

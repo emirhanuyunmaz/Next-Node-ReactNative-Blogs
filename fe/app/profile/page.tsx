@@ -1,6 +1,7 @@
 'use client'
 import { DatePicker } from "@/components/DatePicker";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
     Form,
     FormControl,
@@ -10,12 +11,14 @@ import {
     FormMessage,
   } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { useGetUserProfileQuery, useUpdateUserProfileMutation } from "@/lib/store/user/userApi";
+import { useGetUserProfileQuery, useUpdateUserProfileImageMutation, useUpdateUserProfileMutation } from "@/lib/store/user/userApi";
+import { cn, getBase64 } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Camera } from "lucide-react";
-import Image from "next/image";
+import { format } from "date-fns";
+import { CalendarIcon, Camera } from "lucide-react";
 import { useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -31,6 +34,10 @@ const formSchema = z.object({
 
     email: z.string(),
 
+    address:z.string().optional(),
+
+    birthDay:z.date().optional()
+
   })
 
 
@@ -38,27 +45,26 @@ export default function Page(){
     const {toast} = useToast()
     const userProfile = useGetUserProfileQuery("")
     const [updateProfile,setUpdateProfile] = useUpdateUserProfileMutation() 
-    // console.log("DD:",userProfile.data?.data,userProfile.isSuccess);
+    const [uploadImage,resUploadImage] = useUpdateUserProfileImageMutation()
+    
     const [image,setImage] = useState(userProfile.isSuccess ?userProfile.data?.data.profileImage : "/images/default_user.jpg")
-    const [birthDay,setBirthDay] = useState<Date>()
-    const [address,setAddress] = useState("")
+    
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             firstName: userProfile.isSuccess ? userProfile.data?.data.firstName : "",
             lastName: userProfile.isSuccess ? userProfile.data?.data.lastName : "",
             email:userProfile.isSuccess ? userProfile.data?.data.email : "",
+            address:userProfile.isSuccess ? userProfile.data?.data.address : "",
+            birthDay:userProfile.isSuccess ? userProfile.data?.data.birthDay : "",
         },
     })
      
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const body = {
-            ...values,
-            birthDay:birthDay,
-            address:address,
-        }
+
         // console.log("OnSubmit",values);
-        await updateProfile(body).unwrap().then(() => {
+        await updateProfile(values).unwrap().then(() => {
             toast({
                 title:"Update Succes",
                 variant:"default"
@@ -73,25 +79,36 @@ export default function Page(){
         })
     }
 
+    async function uploadImageOnClick(e:any){
+        const file = e.target.files[0]
+        const image = await getBase64(file)
+        console.log("RESİM BİLGİSİ :",image);
+        const body = {
+            image:image
+        }
+        await uploadImage(body)
+    } 
+
     useLayoutEffect(() => {
         if(userProfile.isSuccess){
             form.setValue("firstName",userProfile.data?.data.firstName)
             form.setValue("lastName",userProfile.data?.data.lastName)
             form.setValue("email",userProfile.data?.data.email)
+            form.setValue("address",userProfile.data?.data.address)
+            form.setValue("birthDay",userProfile.data?.data.birthDay)
             setImage(userProfile.data?.data.profileImage)
-            setAddress(userProfile.data?.data.address)
-            setBirthDay(userProfile.data?.data.birthDay)
         }
-    },[userProfile.isSuccess,userProfile.error,userProfile.isFetching])
+    },[userProfile.isFetching])
 
 
     return(<div className="min-h-[85vh] max-w-5xl mx-auto">
         <div className="flex flex-col gap-3">
             <div className="flex gap-3">
-                <div className="relative w-32 h-32 rounded-full hover:shadow-2xl cursor-pointer transition-all">
-                    <Image loader={() => `${image}`} src={`${image}`} layout="fill"  alt="User Images" className="rounded-full" />
+                <label htmlFor="userProfileImage" className="relative w-32 h-32 rounded-full hover:shadow-2xl cursor-pointer transition-all">
+                    <img src={`${image ? image : "/images/default_user.jpg"}`}  alt="User Images" className="rounded-full w-full" />
                     <Camera className="absolute bottom-0 -right-3" />
-                </div>
+                </label>
+                <input onChange={(e) => uploadImageOnClick(e)} hidden id="userProfileImage" type="file" />
                 
             </div>
         <Form {...form}>
@@ -139,16 +156,68 @@ export default function Page(){
                         </FormItem>
                     )}
                     />
-                    <div className="flex gap-3">
-                        <DatePicker date={birthDay as Date} setDate={setBirthDay} title={`Birth Day`} />
-                        <Input onChange={(e) => setAddress(e.target.value)} value={address} placeholder="Address" className="border-primary" />
-                    </div>
+
+                <FormField
+                    control={form.control}
+                    name="birthDay"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                        <FormLabel>Birth Day</FormLabel>
+                        <Popover>
+                    <PopoverTrigger asChild>
+                  <FormControl className="border-primary">
+                        <Button
+                        variant={"outline"}
+                        className={cn(
+                            "w-[240px] pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                        )}
+                        >
+                        {field.value ? (
+                            format(field.value, "dd/MM/yyyy")
+                        ) : (
+                            <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                    </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                    />
+                    </PopoverContent>
+                </Popover>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+
+                <FormField
+                    control={form.control}
+                    name="address"
+                    
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Address</FormLabel>
+                        <FormControl>
+                            <Textarea placeholder="Address" {...field} className="w-full border-black" />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    
                 
                 <Button className="" type="submit">Update</Button>
             </form>
             </Form>
- 
-
-                    </div>
+        </div>
     </div>)
 }

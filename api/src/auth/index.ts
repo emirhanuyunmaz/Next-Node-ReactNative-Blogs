@@ -1,6 +1,7 @@
 import express, { Request, Response , Application } from 'express';
 import AuthModels from './model';
 import JWT from '../@util/jwt';
+import AdminModels from '../admin/model';
 const router = express.Router()
 
 //***************** SIGN UP USER *****************//
@@ -14,14 +15,19 @@ const signup = async (req:Request,res:Response) => {
         const control = await AuthModels.User.findOne({email:req.body.email})
         const isGoogle = req.body["isGoogle"]
         // console.log(control == null);
+
         if(control == null){
             const data = req.body 
             const newUser = new AuthModels.User(data)
-             const getUser = await newUser.save()
-             console.log("YENİ KULLANICI :",getUser);
-             const tokens = JWT.createToken(String(getUser._id ))
+            const getUser = await newUser.save()
+            console.log("YENİ KULLANICI :",getUser);
+            const tokens = JWT.createToken(String(getUser._id ))
             console.log("TOKENS:",tokens);
-            
+            const newDashboard = new AdminModels.Dashboard({
+                action:"Register User",
+                userId:getUser._id
+            })
+            await newDashboard.save()
             res.status(201).json({succes:true,access_token:tokens.access_token,refresh_token:tokens.refresh_token})
         }else{
             console.log("Zaten var olan bir kullanıcı::",control);

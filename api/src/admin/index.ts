@@ -25,10 +25,8 @@ const loginAdmin = async (req:Request,res:Response) => {
 const homeCarouselImageAdd = async (req:Request,res:Response) => {
     try{
         const image = req.body["image"]
-        console.log("RESIM EKLEME ISLEMI");
         let imageName = await uploadImage(image)
         imageName = process.env.BASE_URL +"/blog/image/"+ imageName
-        console.log("İMAGE NAME:",imageName);
         
         const newImage = new AdminModels.HomeCarousel({
             imageName:imageName
@@ -150,7 +148,7 @@ const getUserList = async(req:Request,res:Response) => {
     }
 }
 
-//*************************** GET SINGLE USER****************************//
+//*************************** GET SINGLE USER ****************************//
 // Kayıtlı olan kullanıcı listesini getirme işlemi.
 const getSingleUser = async(req:Request,res:Response) => {
     try{
@@ -205,10 +203,20 @@ const updateUserProfileImage = async (req:Request,res:Response) => {
         console.log("Profil resmi güncelleme işlemi.");
         const id = req.params["id"]
         const image = req.body["image"]
+        // console.log("KULLANICI RESİMİ:",image);
+        
         const user = await AuthModels.User.findById(id)
-        let imageName = await updateImage({imageName:user!.profileImage,image:image})
-        imageName = process.env.BASE_URL + "/blog/image/" + imageName  
-        await AuthModels.User.findByIdAndUpdate(id,{profileImage:imageName})
+        console.log("USER ::",);
+        
+        if(user?.profileImage){
+            let imageName = await updateImage({imageName:user!.profileImage,image:image})
+            imageName = process.env.BASE_URL + "/blog/image/" + imageName  
+            await AuthModels.User.findByIdAndUpdate(id,{profileImage:imageName})
+        }else{
+            let imageName = await uploadImage(image)
+            imageName =  process.env.BASE_URL + "/blog/image/" + imageName
+            await AuthModels.User.findByIdAndUpdate(id,{profileImage:imageName})
+        }
         res.status(201).json({succes:true})
     }catch(err){
         console.log("Kullanıcı güncellenirken bir hata ile karşılaşıldı.",err);
@@ -227,9 +235,12 @@ const addUser = async(req:Request,res:Response) => {
         const isGoogle =req.body["isGoogle"]
         const address =req.body["address"]
         const profileImage = req.body["profileImage"]
-        
-        let imageName = await uploadImage(profileImage)
-        imageName = process.env.BASE_URL +"/blog/image/" + imageName  
+        console.log("RESİM:",profileImage);
+        let imageName = undefined
+        if(profileImage){
+            imageName = await uploadImage(profileImage)
+            imageName = process.env.BASE_URL +"/blog/image/" + imageName  
+        }
 
         const newUser = new AuthModels.User({
             firstName:firstName,
@@ -300,10 +311,13 @@ const getSingleBlog = async(req:Request,res:Response) => {
 const updateBlog = async(req:Request,res:Response) => {
     try{
         const id = req.body["id"]
+        console.log("RR:",id);
         const title = req.body["title"]
         const tags = req.body["tags"]
-        const category = req.body["selectCategory"] 
+        const category = req.body["category"] 
         const categoryData = await Blogs.Category.find({name:category})
+        console.log(categoryData);
+        
         const blogText = req.body["blogText"]
         await Blogs.Blog.findByIdAndUpdate(id,{title:title,blogText:blogText,tags:tags,category:categoryData[0]._id,})
         res.status(201).json({succes:true})
@@ -602,6 +616,21 @@ const updateContact = async(req:Request,res:Response) => {
     }
 }
 
+//****************************** DASHBOARD ******************************//
+// Kullanıcıların yapmış olduğu işlemleri çekme işlemi. 
+const getDashboard = async (req:Request,res:Response) => {
+    console.log("::DASHBOARD::");
+    
+    try{
+        const data = await AdminModels.Dashboard.find().populate("userId","firstName lastName email")
+
+        res.status(200).json({succes:true,data:data})
+    }catch(err){
+        console.log("Dashboard verileri çekililrken bir hata ile karşılaşıldı.",err);
+        res.status(404).json({message:err,succes:false})
+    }
+}
+
 
 // /admin/...
 router.route("/login").post(loginAdmin)
@@ -634,5 +663,6 @@ router.route("/updateAboutImage").post(updateAboutImage)
 router.route("/getAboutPage").get(getAboutPage)
 router.route("/getContact").get(getContact)
 router.route("/updateContact").post(updateContact)
+router.route("/getDashboard").get(getDashboard)
 
 export default router
