@@ -502,7 +502,8 @@ const updateAboutData = async(req:Request,res:Response) => {
             
         }else{
             console.log("Veri eklenmiş");
-            
+            const about = await AdminModels.About.find()
+            await AdminModels.About.findByIdAndUpdate(about[0]._id,{text:text})
         }
         
         res.status(200).json({succes:true,data:data})
@@ -553,8 +554,17 @@ const getAboutPage = async (req:Request,res:Response) => {
     try{
         console.log(":About:");
         let data = await AdminModels.About.find()
-        data[0].text = markdown.toHTML( data[0].text )
-        res.status(200).json({succes:true,data:data[0]})
+        console.log(data);
+        if(data.length > 0 ){
+            console.log("DATA:::",data[0].text);
+            if(data[0].text){
+                data[0].text = markdown.toHTML( data[0].text )
+            }
+            res.status(200).json({succes:true,data:data[0]})
+        }else{
+            res.status(200).json({succes:true,data:data})
+        }
+        
     }catch(err){
         console.log("About sayfası çekilirken bir hata ile karşılaşıldı.",err);
         res.status(404).json({message:err,succes:false})
@@ -567,7 +577,7 @@ const getContact = async(req:Request,res:Response) => {
     try{
         console.log("::CONTAC GET::");
         const data = await AdminModels.Contact.find()
-
+        console.log(data);
         res.status(200).json({succes:true,data:data[0]})
     }catch(err){
         console.log("Contact sayfasının verileri çekilirken bir hata ile karşılaşıldı.",err);
@@ -584,8 +594,11 @@ const updateContact = async(req:Request,res:Response) => {
         const location = req.body["location"]
         const phoneNumber = req.body["phoneNumber"]
         const twitterUrl = req.body["twitterUrl"]
+        const twitterUrlShow = req.body["twitterUrlShow"]
         const instagramUrl = req.body["instagramUrl"]
+        const instagramUrlShow = req.body["instagramUrlShow"]
         const facebookUrl = req.body["facebookUrl"]
+        const facebookUrlShow = req.body["facebookUrlShow"]
         if(data.length == 0){
             console.log("Contact data yok");
             const newData = new AdminModels.Contact({
@@ -593,8 +606,11 @@ const updateContact = async(req:Request,res:Response) => {
                 location:location,
                 phoneNumber:phoneNumber,
                 facebookUrl:facebookUrl,
+                facebookUrlShow:facebookUrlShow,
                 instagramUrl:instagramUrl,
-                twitterUrl:twitterUrl
+                instagramUrlShow:instagramUrlShow,
+                twitterUrl:twitterUrl,
+                twitterUrlShow:twitterUrlShow
             })
             await newData.save()
 
@@ -605,8 +621,12 @@ const updateContact = async(req:Request,res:Response) => {
                 location:location,
                 phoneNumber:phoneNumber,
                 facebookUrl:facebookUrl,
+                facebookUrlShow:facebookUrlShow,
                 instagramUrl:instagramUrl,
-                twitterUrl:twitterUrl})
+                instagramUrlShow:instagramUrlShow,
+                twitterUrl:twitterUrl,
+                twitterUrlShow:twitterUrlShow
+            })
         }
 
         res.status(201).json({succes:true})

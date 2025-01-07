@@ -3,7 +3,7 @@ import { getCookie } from 'cookies-next'
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
-  tagTypes:["blog","user","category","image"],
+  tagTypes:["blog","user","category","image","about"],
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000"+"/admin" , headers:{
       access_token:getCookie("access_token") as string
     }}),
@@ -181,6 +181,7 @@ export const adminApi = createApi({
 
     getAboutData: builder.query<any , any>({
         query: () => `/getAboutData`,
+        providesTags:["about"]
     }),
 
     updateAbout: builder.mutation<any , any>({
@@ -189,6 +190,7 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["about"]
     }),
 
     updateAboutImage: builder.mutation<any , any>({
@@ -197,6 +199,7 @@ export const adminApi = createApi({
          method:"POST",
          body:body
         }),
+        invalidatesTags:["about"]
     }),
 
     getContact: builder.query<any , any>({

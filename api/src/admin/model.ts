@@ -102,8 +102,11 @@ interface ContactModel{
     location:String,
     email:String,
     twitterUrl:String,
+    twitterUrlShow:Boolean,
     instagramUrl:String,
-    facebookUrl:String
+    instagramUrlShow:Boolean,
+    facebookUrl:String,
+    facebookUrlShow:Boolean,
 }
 
 const ContactSchema = new Schema<ContactModel>({
@@ -111,8 +114,20 @@ const ContactSchema = new Schema<ContactModel>({
     location:String,
     phoneNumber:String,
     facebookUrl:String,
+    facebookUrlShow:{
+        type:Boolean,
+        default:false
+    },
     instagramUrl:String,
-    twitterUrl:String
+    instagramUrlShow:{
+        type:Boolean,
+        default:false
+    },
+    twitterUrl:String,
+    twitterUrlShow:{
+        type:Boolean,
+        default:false
+    },
 })
 
 const HomeCarousel = mongoose.model<HomeCarouselModel>("HomeCarousel",homeCarouselSchema)

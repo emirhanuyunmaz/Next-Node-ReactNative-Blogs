@@ -12,7 +12,7 @@ import {
   } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useGetCategoriesQuery, useGetSingleBlogQuery, useGetUpdateBlogQuery, useUpdateBlogMutation } from "@/lib/store/blog/blogApi"
+import { useGetCategoriesQuery, useGetSingleBlogQuery, useGetUpdateBlogQuery, useUpdateBlogImageMutation, useUpdateBlogMutation } from "@/lib/store/blog/blogApi"
 import MDEditor from "@uiw/react-md-editor"
 import { TagInput } from "emblor"
 import { useParams, useRouter } from "next/navigation"
@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useToast } from "@/hooks/use-toast"
+import { getBase64 } from "@/lib/utils"
 
 
 const tagObj = z.object({
@@ -64,7 +65,8 @@ export default function Page(){
     const getCategories = useGetCategoriesQuery("")
 
     const [updateBlog,resUpdateBlog] = useUpdateBlogMutation()
-    
+    const [updateBlogImage,resUpdateBlogImage] = useUpdateBlogImageMutation()
+
     const [images, setImages] = useState<any>("");
     const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
     const [categories,setCategories] = useState([])
@@ -98,6 +100,30 @@ export default function Page(){
         console.log(values)
       }
 
+
+      async function UpdateBlogImageHandleClick(e:any){
+        const file = e.target.files[0]
+        const image = await getBase64(file)
+        
+        const body = {
+            id:id,
+            image:image
+        }
+
+        await updateBlogImage(body).unwrap()
+        .then(() => {
+            toast({
+                title:"Image update succes"
+            })
+        })
+        .catch((err) => {
+            console.log("HATA:",err);
+            toast({
+                title:"ERROR"
+            })
+        })
+      }
+
     useEffect(() => {
         if(getCategories.isSuccess){
             setCategories(getCategories.data.data)
@@ -111,16 +137,21 @@ export default function Page(){
             form.setValue("blogText",getBlog.data.data.blogText)
             form.setValue("category",getBlog.data.data.category.name)
             form.setValue("tags",getBlog.data.data.tags)
+            setImages(getBlog.data.data.image)
         }
     },[getBlog.isFetching])
 
     return(<div className="max-w-7xl min-h-[85vh] mx-auto">
         <div className='mx-3 md:mx-0 flex flex-col md:flex-row gap-3'>
 
-            <div className='flex md:w-1/4 flex-row gap-3 justify-center'>
-                <div className='flex  w-full h-52 justify-center items-center border-2'>
-                    <img src="/images/default_user.jpg"/>
+            <div className='flex flex-col md:w-1/4 gap-3 items-center'>
+                <div className='flex flex-col w-full h-52 justify-center items-center border-2 relative'>
+                    <img src={`${images == "" ?"/images/default_user.jpg" : images}`} className="w-full h-full absolute" />
                 </div>
+                <label htmlFor="updateImage" className="px-2 py-1 rounded-xl border-2 border-primary cursor-pointer  hover:border-blue-400 hover:text-blue-400 transition-all ">
+                    Update
+                </label>
+                <input onChange={(e) => UpdateBlogImageHandleClick(e)} hidden id="updateImage" type="file" />
 
             </div>
 

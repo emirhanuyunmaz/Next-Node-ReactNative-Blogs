@@ -1,8 +1,50 @@
+'use client'
 import { Mail } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useGetCategoriesQuery } from "@/lib/store/blog/blogApi";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useGetContactQuery, useGetFooterDataQuery } from "@/lib/store/admin/adminApi";
 
 export default function Footer(){
+
+    const getCategory = useGetCategoriesQuery("")
+    const getFooterData = useGetFooterDataQuery("")
+    const getContact = useGetContactQuery("")
+
+    const [categories,setCategories] = useState([])
+    const [footerAbout,setFooterAbout] = useState("")
+    const [email,setEmail] = useState("")
+    const [phoneNumber,setPhoneNumber] = useState("")
+
+    useEffect(() => {
+        if(getCategory.isSuccess){
+            if(getCategory.data.data){
+                setCategories(getCategory.data.data)
+            }
+        }
+    },[getCategory.isFetching])
+    
+
+    useEffect(() => {
+        if(getFooterData.isSuccess){
+            if(getFooterData.data.data){
+                setFooterAbout(getFooterData.data.data.text)
+            }
+        }
+    },[getFooterData.isFetching])
+
+    useEffect(() => {
+        if(getContact.isSuccess){
+            if(getContact.data.data){
+                setEmail(getContact.data.data.email)
+                setPhoneNumber(getContact.data.data.phoneNumber)
+            }
+        }
+    },[getContact.isFetching])
+    
+
     return(<footer className=" bg-primary py-16 mt-5 text-white">
         
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row  gap-5">            
@@ -10,17 +52,17 @@ export default function Footer(){
                 <div className="md:w-1/2 text-center">
                     <div>
                         <h3 className="font-bold">About</h3>
-                        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Optio, voluptas!</p>
+                        <p>{footerAbout}</p>
                     </div>
 
                     <div className="flex gap-2 justify-center">
                         <p>Email:</p>
-                        <p>info@gmail.com</p>
+                        <p>{email}</p>
                     </div>
 
                     <div className="flex gap-2 justify-center">
                         <p>Phone:</p>
-                        <p>+123456789</p>
+                        <p>{phoneNumber}</p>
                     </div>
 
                 </div>
@@ -28,24 +70,18 @@ export default function Footer(){
                 <div className="md:w-1/4 text-center">
                     <h3 className="font-bold">Quick Link</h3>
                     <ul>
-                        <li>Home</li>
-                        <li>About</li>
-                        <li>Blog</li>
-                        <li>Archived</li>
-                        <li>Author</li>
-                        <li>Contact</li>
+                        <li><Link href={`/`} >Home</Link></li>
+                        <li><Link href={`/about`} >About</Link></li>
+                        <li><Link href={`/contact`} >Contact</Link></li>
                     </ul>
                 </div>
 
                 <div className="md:w-1/4 text-center">
                     <h3 className="font-bold" >Category</h3>
                     <ul>
-                        <li>Lifestyle</li>
-                        <li>Technology</li>
-                        <li>Travel</li>
-                        <li>Business</li>
-                        <li>Economy</li>
-                        <li>Sports</li>
+                        {
+                            categories.map((item:any) => <li key={item._id}><Link href={`/category/${item.slug}`} >{item.name}</Link></li> ) 
+                        }
                     </ul>
                 </div>
             </div>

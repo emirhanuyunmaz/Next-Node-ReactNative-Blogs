@@ -47,6 +47,15 @@ export const blogApi = createApi({
       invalidatesTags:["blog"]
     }),
 
+    updateBlogImage: builder.mutation<any , any>({
+      query: (body) =>({ 
+       url: `/updateBlogImage/${body.id}`,
+       method:"POST",
+       body:body
+      }),
+      invalidatesTags:["blog"]
+    }),
+
     deleteBlog: builder.mutation<any , any>({
       query: (body) =>({ 
        url: `/deleteBlog/${body.id}`,
@@ -59,9 +68,14 @@ export const blogApi = createApi({
       query:(category) => `/getCategoryBlogs/${category}`
     }),
 
+    getSearchBlogs : builder.query<any,any>({
+      query:(search) => `/getSearchBlogs/${search}`
+    }),
+    
+
   }),
 })
 
 
-export const { useAddBlogMutation,useGetUserBlogsQuery,useGetCategoriesQuery,useGetSingleBlogQuery,useGetCategoryBlogsQuery ,useGetUpdateBlogQuery ,useUpdateBlogMutation,useDeleteBlogMutation} = blogApi
+export const { useAddBlogMutation,useGetUserBlogsQuery,useGetCategoriesQuery,useGetSingleBlogQuery,useGetCategoryBlogsQuery ,useGetUpdateBlogQuery ,useUpdateBlogMutation,useDeleteBlogMutation,useUpdateBlogImageMutation} = blogApi
 

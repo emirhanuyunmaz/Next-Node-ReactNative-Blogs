@@ -18,14 +18,24 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 const formSchema = z.object({
-    phoneNumber: z.string().optional(),
-    email: z.string().optional(),
-    location: z.string().optional(),
+    phoneNumber: z.string().min(3,{
+        message:"Phone Number is required"
+    }),
+    email: z.string().min(3,{
+        message:"Email is required"
+    }),
+    location: z.string().min(3,{
+        message:"Location is required"
+    }),
     twitterUrl: z.string().optional(),
+    twitterUrlShow: z.boolean().optional(),
     instagramUrl: z.string().optional(),
+    instagramUrlShow: z.boolean().optional(),
     facebookUrl: z.string().optional(),
+    facebookUrlShow: z.boolean().optional(),
 })
 
 
@@ -41,8 +51,11 @@ export default function Page(){
           email: "",
           location: "",
           twitterUrl: "",
+          twitterUrlShow:false,
           instagramUrl: "",
+          instagramUrlShow:false,
           facebookUrl: "",
+          facebookUrlShow:false
         },
     })
      
@@ -68,8 +81,11 @@ export default function Page(){
             form.setValue("phoneNumber",getCotact.data.data?.phoneNumber)
             form.setValue("location",getCotact.data.data?.location)
             form.setValue("twitterUrl",getCotact.data.data?.twitterUrl)
+            form.setValue("twitterUrlShow",getCotact.data.data?.twitterUrlShow)
             form.setValue("instagramUrl",getCotact.data.data?.instagramUrl)
+            form.setValue("instagramUrlShow",getCotact.data.data?.instagramUrlShow)
             form.setValue("facebookUrl",getCotact.data.data?.facebookUrl)
+            form.setValue("facebookUrlShow",getCotact.data.data?.facebookUrlShow)
         }
     },[getCotact.isFetching])
 
@@ -85,10 +101,10 @@ export default function Page(){
                         control={form.control}
                         name="phoneNumber"
                         render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Phone Number</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Phone Number" {...field} className="border-primary"/>
+                            <FormItem >
+                            <FormLabel>Phone Number*</FormLabel>
+                            <FormControl >
+                                <Input  placeholder="Phone Number" {...field} className="border-primary"/>
                             </FormControl>
                             <FormDescription>
                                 Phone Number to contact
@@ -103,7 +119,7 @@ export default function Page(){
                         name="email"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>Email*</FormLabel>
                             <FormControl>
                                 <Input placeholder="Email" {...field} className="border-primary"/>
                             </FormControl>
@@ -120,7 +136,7 @@ export default function Page(){
                         name="location"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Location</FormLabel>
+                            <FormLabel>Location*</FormLabel>
                             <FormControl>
                                 <Input placeholder="Location" {...field} className="border-primary"/>
                             </FormControl>
@@ -132,48 +148,82 @@ export default function Page(){
                         )}
                         />
 
-                    <FormField
-                        control={form.control}
-                        name="twitterUrl"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Twitter Url</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Twitter Url" {...field} className="border-primary"/>
-                            </FormControl>
-                            <FormDescription>
-                                Twitter to contact
-                            </FormDescription>
-                            <FormMessage />
-                            </FormItem>
-                        )}
+                    <div className="flex items-center gap-3">
+
+                        <FormField
+                            control={form.control}
+                            name="twitterUrl"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                <FormLabel>Twitter Url</FormLabel>
+                                <FormControl>
+                                    <Input required={form.getValues("twitterUrlShow")} placeholder="Twitter Url" {...field} className="border-primary"/>
+                                </FormControl>
+                                <FormDescription>
+                                    Twitter to contact
+                                </FormDescription>
+                                <FormMessage />
+                                </FormItem>
+                            )}
                         />
 
-                    <FormField
-                        control={form.control}
-                        name="instagramUrl"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Instagram Url</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Twitter Url" {...field} className="border-primary"/>
-                            </FormControl>
-                            <FormDescription>
-                                Instagram to contact
-                            </FormDescription>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                        <FormField
+                            control={form.control}
+                            name="twitterUrlShow"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                <FormLabel>Show</FormLabel>
+                                <FormControl>
+                                    <Switch checked={field.value} onCheckedChange={field.onChange}/>
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+                        </div>
+                    <div className="flex items-center gap-3 w-full ">
+                        <FormField
+                            control={form.control}
+                            name="instagramUrl"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                <FormLabel>Instagram Url</FormLabel>
+                                <FormControl>
+                                    <Input required={form.getValues("instagramUrlShow")} placeholder="Instagram Url" {...field} className="border-primary"/>
+                                </FormControl>
+                                <FormDescription>
+                                    Instagram to contact
+                                </FormDescription>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="instagramUrlShow"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                <FormLabel>Show</FormLabel>
+                                <FormControl>
+                                    <Switch checked={field.value} onCheckedChange={field.onChange}/>
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
+                        </div>
+                    
+                    <div className="flex items-center gap-3">
 
                     <FormField
                         control={form.control}
                         name="facebookUrl"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="w-full">
                             <FormLabel>Facebook Url</FormLabel>
                             <FormControl>
-                                <Input placeholder="Twitter Url" {...field} className="border-primary"/>
+                                <Input required={form.getValues("facebookUrlShow")} placeholder="Facebook Url" {...field} className="border-primary"/>
                             </FormControl>
                             <FormDescription>
                                 Facebook to contact
@@ -181,7 +231,22 @@ export default function Page(){
                             <FormMessage />
                             </FormItem>
                         )}
-                    />
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="facebookUrlShow"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                <FormLabel>Show</FormLabel>
+                                <FormControl>
+                                    <Switch checked={field.value} onCheckedChange={field.onChange}/>
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
                         <Button type="submit">Submit</Button>
                     </form>
                 </Form>

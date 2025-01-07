@@ -2,7 +2,7 @@ import express,{Request,Response} from "express"
 import { authControl } from "../middleware/auth";
 import path from "path"
 import slugify from "slugify";
-import { deleteImage, uploadImage } from "../@util";
+import { deleteImage, updateImage, uploadImage } from "../@util";
 import Blogs from "./model";
 import crypto from "crypto"
 import AdminModels from "../admin/model";
@@ -51,7 +51,7 @@ const getCategoryBlogs = async(req:Request,res:Response) => {
         // console.log("CATE",category);
         
         const data = await Blogs.Blog.find({category:category[0]._id}).populate("writer","firstName lastName profileImage ").populate("category","name")
-        // console.log("DATA:",data);
+        console.log("DATA:",data);
         
         res.status(200).json({succes:true , data:data})
     }catch(err){
@@ -59,6 +59,23 @@ const getCategoryBlogs = async(req:Request,res:Response) => {
         res.status(404).json({message:err,succes:false})
     }
 }
+//**************************GET SEARCH BLOGS**************************// 
+// Blog title bilgisine göre arama işlemi.
+const getSearchBlogs = async (req:Request,res:Response) => {
+    try{
+        const search = req.params.search
+        console.log("SS:",search);
+        
+        console.log(".Blog arama işlemi.");
+        
+
+        res.status(200).json({succes:true})
+    }catch(err){
+        console.log("Blog arama işlemi yapılırken bir hata ile karşılaşıldı.",err);
+        res.status(404).json({message:err,succes:false})
+    }
+}
+
 
 // ********************ADD BLOG ********************//
 // Blog Kaydetme işlemi
@@ -164,6 +181,28 @@ const updateBlog = async(req:Request,res:Response) => {
     }
 }
 
+//******************UPDATE BLOG IMAGE ****************************// 
+// Blog resmi güncelleme işlemi .
+const updateBlogImage = async (req:Request,res:Response) => {
+    console.log(":BLOG GÜNCELLEME:");
+    
+    try{
+        const slug = req.params.slug
+        console.log("REQ:",req.body);
+        const image = req.body.image
+        const blog = await Blogs.Blog.find({slug:slug})
+
+        let newBlogImage = await updateImage({imageName:blog[0].image,image:image})
+        newBlogImage = process.env.BASE_URL +"/blog/image/"+ newBlogImage
+        await Blogs.Blog.findByIdAndUpdate(blog[0]._id,{image:newBlogImage})
+
+        res.status(201).json({succes:true})
+    }catch(err) {
+        console.log("Blog resmi güncellenirklen bir hata ile karşılaşıldı.",err);
+        res.status(404).json({succes:false})
+    }
+}
+
 //*****************USER GET BLOG UPDATE*************************// 
 // Kullanıcı blog güncelleme işlemi için blog bilgisini alma işlemi.
 const getUpdateBlog = async(req:Request,res:Response) => {
@@ -215,6 +254,7 @@ const getImage = async(req:Request,res:Response) => {
 
 router.route("/addBlog").post(authControl,addBlog)
 router.route("/updateBlog").post(updateBlog)
+router.route("/updateBlogImage/:slug").post(updateBlogImage)
 router.route("/getBlog/:name").get(getSingleBlog)
 router.route("/deleteBlog/:id").delete(deleteBlog)
 router.route("/addCategory").post(addCategory)

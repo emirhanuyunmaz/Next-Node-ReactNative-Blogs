@@ -11,11 +11,24 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel"
 import Image from "next/image"
+import { useHomeCarouselGetImageQuery } from "@/lib/store/admin/adminApi"
 
 export function MainCarousel() {
+  const getCarouselImages = useHomeCarouselGetImageQuery("")
+
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
   const [count, setCount] = React.useState(0)
+  const [data,setData] = React.useState([])
+
+  React.useEffect(() => {
+    if(getCarouselImages.isSuccess){
+      console.log(getCarouselImages.data);
+      if(getCarouselImages.data.data){
+        setData(getCarouselImages.data.data)
+      }
+    }
+  },[getCarouselImages.isFetching])
 
   React.useEffect(() => {
     if (!api) {
@@ -34,13 +47,13 @@ export function MainCarousel() {
     <div className="max-w-7xl mx-auto">
       <Carousel setApi={setApi} className="w-full mx-auto  ">
         <CarouselContent>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <CarouselItem key={index}>
+          {data.map((item:any) => (
+            <CarouselItem key={item._id}>
               <Card>
                 <CardContent className="relative flex h-[80vh] items-center justify-center p-6">
-                  <div className="border-2 border-black w-full h-full">
-                    <Image loader={() => "https://picsum.photos/seed/picsum/1200/800"} src={"https://picsum.photos/seed/picsum/1200/800"} layout="fill"  alt="" />
-                  </div>
+                  {/* <div className="border-2 border-black w-full h-full"> */}
+                    <img src={`${item.imageName}`} className="w-full h-full absolute"  alt="" />
+                  {/* </div> */}
                 </CardContent>
               </Card>
             </CarouselItem>

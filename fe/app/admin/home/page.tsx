@@ -1,7 +1,6 @@
 'use client'
 import BlogList from "@/components/admin/home/BlogList";
 import CarouselImage from "@/components/admin/home/CarouselImage";
-import { useHomeCarouselImageAddMutation } from "@/lib/store/admin/adminApi";
 import { GalleryHorizontal, StickyNote } from "lucide-react";
 import { useState } from "react";
 
@@ -9,8 +8,6 @@ import { useState } from "react";
 export default function Page(){    
     
     const [select,setSelect] = useState(0)
-
-    
 
     return(<div>
         <h1 className="text-xl font-bold ms-10">
@@ -27,7 +24,7 @@ export default function Page(){
                 <span className="font-bold">Blog List</span>
             </button>
         </div>
-        <div className="w-[91%] px-10 mt-3 md:w-1/2">
+        <div className="w-[91%] px-10 mt-3 ">
             {select === 0 && <CarouselImage/>}
             {select === 1 && <BlogList/>}
         </div>

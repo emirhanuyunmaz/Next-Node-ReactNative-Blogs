@@ -1,5 +1,4 @@
 'use client'
-import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useHomeCarouselGetImageQuery, useHomeCarouselImageAddMutation, useHomeCarouselImageDeleteMutation, useHomeCarouselImageUpdateMutation } from "@/lib/store/admin/adminApi";
 import { getBase64 } from "@/lib/utils";
@@ -71,7 +70,7 @@ export default function CarouselImage(){
     },[getCarouselImages])
 
 
-    return(<div className="flex gap-3">
+    return(<div className="flex gap-3 w-full">
 
         <label htmlFor="homeCarouselAddImage" className="w-40 h-40 border-2 flex flex-col justify-center items-center hover:border-primary transition-all cursor-pointer">
             <span><Camera/></span>
@@ -79,7 +78,7 @@ export default function CarouselImage(){
         </label>
         <input id="homeCarouselAddImage" hidden onChange={(e) => uploadImage(e)} type="file" />
         
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap w-full">
             {
                 images?.length != 0 && images?.map((item:any) => <div key={item._id} className="">
                 <img className="w-40 h-40 " style={{objectFit:"fill"}} src={item.imageName} alt="Carousel Image" />

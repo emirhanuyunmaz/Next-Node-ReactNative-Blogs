@@ -8,9 +8,14 @@ interface About {
 }
 
 async function getPost() {
-    const res = await fetch(`http://localhost:8000/admin/getAboutPage/`)
-    const post: About = await res.json()
-    return post.data
+    try{
+        const res = await fetch(`http://localhost:8000/admin/getAboutPage/`)
+        const post: About = await res.json()
+        return post.data
+    }catch(err){
+        console.log("ERRR:::",err);
+        return {image:"",text:""}
+    }
 }
 
 
@@ -20,12 +25,14 @@ export default async function Page(){
     return(<div className="max-w-7xl min-h-[85vh] flex flex-col mx-auto">
         
         <div className="relative w-full h-[70vh] text-center flex justify-center">
-            <img  src={`${data.image}`} alt="About Image" className="w-full" />
+            <img  src={`${data?.image ?  data?.image : "/images/not_image.png" }`} alt="About Image" className="w-full" />
         </div>
 
         <div className="flex items-center flex-col mt-3 gap-3">
             <h1 className="text-5xl font-bold">About</h1>
-            {parse(data.text as string)}
+            <div className='flex flex-col gap-3'>
+                {data?.text ? parse(data?.text as string) : <></>}
+            </div>
             
         </div>
         

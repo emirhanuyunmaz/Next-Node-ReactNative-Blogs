@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,6 +15,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Textarea } from "@/components/ui/textarea";
+import { useGetContactQuery } from "@/lib/store/admin/adminApi";
+import { useEffect, useState } from "react";
 
 
 const formSchema = z.object({
@@ -30,7 +31,7 @@ const formSchema = z.object({
         message: "Email must be at least 2 characters.",
     }),
 
-    phoenNumber: z.string().min(2, {
+    phoneNumber: z.string().min(2, {
         message: "Phone Number must be at least 2 characters.",
     }),
 
@@ -41,25 +42,54 @@ const formSchema = z.object({
   })
 
 export default function Page(){
+    const getContact= useGetContactQuery("")
+    const [location ,setLocation ]= useState("")
+    const [email,setEmail]= useState("")
+    const [phoneNumber,setPhoneNumber]= useState("")
 
-    // 1. Define your form.
+    const [twitterUrl,setTwitterUrl] = useState("")
+    const [showTwitter,setShowTwitter] = useState(false) 
+    
+    const [instagramUrl,setInstagramUrl] = useState("")
+    const [showInstagram,setShowInstagram] = useState(false)
+
+    const [facebookUrl,setFacebookUrl] = useState("")
+    const [showFacebook,setShowFacebook] = useState(false)
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
         firstName: "",
         lastName: "",
         email: "",
-        phoenNumber: "",
+        phoneNumber: "",
         message: "",
         },
     })
     
-    // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
         console.log(values)
     }
+
+    useEffect(() => {
+        if(getContact.isSuccess){
+            if(getContact.data.data){
+                setPhoneNumber(getContact.data.data.phoneNumber)
+                setEmail(getContact.data.data.email)
+                setLocation(getContact.data.data.location)
+
+                setTwitterUrl(getContact.data.data.twitterUrl)
+                setShowTwitter(getContact.data.data.twitterUrlShow)
+
+                setInstagramUrl(getContact.data.data.instagramUrl)
+                setShowInstagram(getContact.data.data.instagramUrlShow)
+                
+                setFacebookUrl(getContact.data.data.facebookUrl)
+                setShowFacebook(getContact.data.data.facebookUrlShow)
+            }
+            
+        }
+    },[getContact.isFetching])
 
 
     return(<div className=" max-w-7xl min-h-[85vh] md:mx-auto flex flex-col mx-5 md:flex-row border-primary rounded-xl">
@@ -72,33 +102,32 @@ export default function Page(){
             <div className="flex flex-col ms-3 gap-3">
                 <div className="flex gap-5">
                     <p><Phone /></p>
-                    <p>+0123456789</p>
+                    <p>{phoneNumber}</p>
                 </div>
 
                 <div className="flex gap-5">
                     <p><Mail /></p>
-                    <p>info@gmail.com</p>
+                    <p>{email}</p>
                 </div>
 
                 <div className="flex gap-5">
                     <p><MapPin /></p>
-                
-                    <p>Kahramanmaraş</p>
+                    <p>{location}</p>
                 </div>
             </div>
 
             <div className="flex gap-5 ">
-                <div className="bg-gray-900 rounded-full p-2 hover:bg-primary transition-all">
-                    <Link href={``} ><Twitter/></Link>
-                </div>
+                {showTwitter && <div className="bg-gray-900 rounded-full p-2 hover:bg-primary transition-all">
+                    <Link href={twitterUrl} ><Twitter/></Link>
+                </div>}
 
-                <div className="bg-gray-900 rounded-full p-2 hover:bg-primary transition-all">
-                    <Link href={``} ><Instagram/></Link>
-                </div>
+                {showInstagram && <div className="bg-gray-900 rounded-full p-2 hover:bg-primary transition-all">
+                    <Link href={instagramUrl} ><Instagram/></Link>
+                </div>}
 
-                <div className="bg-gray-900 rounded-full p-2 hover:bg-primary transition-all">
-                    <Link href={``} ><Facebook/></Link>
-                </div>
+                {showFacebook && <div className="bg-gray-900 rounded-full p-2 hover:bg-primary transition-all">
+                    <Link href={facebookUrl} ><Facebook/></Link>
+                </div>}
             </div>
         </div>
 
@@ -153,7 +182,7 @@ export default function Page(){
 
                     <FormField
                         control={form.control}
-                        name="phoenNumber"
+                        name="phoneNumber"
                         render={({ field }) => (
                             <FormItem>
                             <FormLabel>Phone Number</FormLabel>
