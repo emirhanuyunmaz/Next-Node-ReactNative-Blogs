@@ -40,6 +40,20 @@ const getCategories = async (req:Request,res:Response) => {
     }
 }
 
+//******************GET ALL BLOG***********************// 
+//Tüm blog listesini çekme işlemi.
+const getAllBlog = async(req:Request,res:Response) => {
+    try{
+        const data = await Blogs.Blog.find().populate("writer","firstName lastName profileImage").populate("category","name")
+        res.status(200).json({succes:true,data:data})
+    }catch(err){
+        console.log("Tüm blog listesi çekilirken bir hata ile karşılaşıldı.",err);
+        res.status(404).json({message:err,succes:false})
+    }
+}
+
+//********************GET CATEGORY BLOG****************// 
+// Kategori olarak blog listesi çekilmesi işlemi .
 const getCategoryBlogs = async(req:Request,res:Response) => {
     try{
         console.log("Category Name Blog listesi :");
@@ -66,10 +80,11 @@ const getSearchBlogs = async (req:Request,res:Response) => {
         const search = req.params.search
         console.log("SS:",search);
         
-        console.log(".Blog arama işlemi.");
-        
+        const data =await Blogs.Blog.find({$or:[
+            {title:{ $regex: `${search}`, $options: 'i' }},
+        ]}).select("title image slug")
 
-        res.status(200).json({succes:true})
+        res.status(200).json({succes:true,data:data})
     }catch(err){
         console.log("Blog arama işlemi yapılırken bir hata ile karşılaşıldı.",err);
         res.status(404).json({message:err,succes:false})
@@ -251,11 +266,12 @@ const getImage = async(req:Request,res:Response) => {
 }
 
 
-
+router.route("/getAllBlog").get(getAllBlog)
 router.route("/addBlog").post(authControl,addBlog)
 router.route("/updateBlog").post(updateBlog)
 router.route("/updateBlogImage/:slug").post(updateBlogImage)
 router.route("/getBlog/:name").get(getSingleBlog)
+router.route("/searchBlog/:search").get(getSearchBlogs)
 router.route("/deleteBlog/:id").delete(deleteBlog)
 router.route("/addCategory").post(addCategory)
 router.route("/getCategories").get(getCategories)

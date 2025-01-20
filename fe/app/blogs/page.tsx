@@ -1,7 +1,7 @@
 'use client'
 import { useSearchParams } from "next/navigation"
 
-
+// Blog arama işlemi ...
 export default function Page(){
 
     const params = useSearchParams()

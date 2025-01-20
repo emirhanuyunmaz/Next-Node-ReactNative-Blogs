@@ -10,7 +10,7 @@ import {
     FormLabel,
     FormMessage,
   } from "@/components/ui/form"
-import { GoogleLogin, googleLogout, useGoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,7 +24,6 @@ import { Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { saveToken } from "@/lib/token/tokenControl";
-import { getCookie } from "cookies-next";
 
 const formSchema = z.object({
     email: z.string().min(5, {
@@ -62,7 +61,16 @@ export default function Page(){
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        await login(values)
+        await login(values).unwrap()
+        .then((payload) => {
+            saveToken({access_token:payload.access_token,refresh_token:payload.refresh_token})
+            location.reload()
+        }).catch((e) => {
+            toast({
+                title: "ERROR",
+                description: "Login is error",
+            })
+        })
         console.log(loginResponse);
     }
 

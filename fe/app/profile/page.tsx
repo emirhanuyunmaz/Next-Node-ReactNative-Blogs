@@ -18,7 +18,7 @@ import { useGetUserProfileQuery, useUpdateUserProfileImageMutation, useUpdateUse
 import { cn, getBase64 } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns";
-import { CalendarIcon, Camera } from "lucide-react";
+import { CalendarIcon, Camera, Check } from "lucide-react";
 import { useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -36,7 +36,7 @@ const formSchema = z.object({
 
     address:z.string().optional(),
 
-    birthDay:z.date().optional()
+    birthDay:z.date().optional(),
 
   })
 
@@ -46,7 +46,8 @@ export default function Page(){
     const userProfile = useGetUserProfileQuery("")
     const [updateProfile,setUpdateProfile] = useUpdateUserProfileMutation() 
     const [uploadImage,resUploadImage] = useUpdateUserProfileImageMutation()
-    
+    const [isPremium,setIsPremium] = useState(false)
+
     const [image,setImage] = useState(userProfile.isSuccess ?userProfile.data?.data.profileImage : "/images/default_user.jpg")
     
 
@@ -97,6 +98,7 @@ export default function Page(){
             form.setValue("address",userProfile.data?.data.address)
             form.setValue("birthDay",userProfile.data?.data.birthDay)
             setImage(userProfile.data?.data.profileImage)
+            setIsPremium(userProfile.data?.data.isPremium)
         }
     },[userProfile.isFetching])
 
@@ -105,11 +107,13 @@ export default function Page(){
         <div className="flex flex-col gap-3">
             <div className="flex gap-3">
                 <label htmlFor="userProfileImage" className="relative w-32 h-32 rounded-full hover:shadow-2xl cursor-pointer transition-all">
-                    <img src={`${image ? image : "/images/default_user.jpg"}`}  alt="User Images" className="rounded-full w-full" />
+                    <img src={`${image ? image : "/images/default_user.jpg"}`}  alt="User Images" className="rounded-full w-full h-full" />
                     <Camera className="absolute bottom-0 -right-3" />
                 </label>
                 <input onChange={(e) => uploadImageOnClick(e)} hidden id="userProfileImage" type="file" />
-                
+                {isPremium && <div className="ms-auto bg-green-400 flex mb-auto p-3 text-white rounded-full">
+                    Premium <Check/>
+                </div>}
             </div>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">

@@ -1,6 +1,7 @@
 import TicketText from "@/components/TicketText"
 import parse from 'html-react-parser'
 import "./blog_detail.css"
+import DownloadPdfBlog from "@/components/DownloadPdfBlog"
 interface Blogs {
     data : {_id: String,
     title: String,
@@ -53,9 +54,8 @@ export default async function Page({params}:any){
                 <div className="flex flex-col gap-2">
                     <h1 className="text-3xl font-bold text-center">{data.title}</h1>
                     {parse(data.blogText as string)}
-                    
                 </div>
-    
+                <DownloadPdfBlog data={data} />
             </div>
     
         </div>)

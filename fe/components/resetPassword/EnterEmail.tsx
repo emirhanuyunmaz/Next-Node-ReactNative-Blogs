@@ -17,15 +17,18 @@ import { ChevronLeft } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { z } from "zod"
+import { useResetPasswordMutation } from "@/lib/store/auth/authApi"
 
 
 const formSchema = z.object({
-    email: z.string().min(2, {
-      message: "Email must be at least 2 characters.",
+    email: z.string().min(10, {
+      message: "Email must be at least 10 characters.",
     }),
   })
 
 export default function EnterEmail({setChangeLayout}:any){
+    const [resetPassword,resResetPassword] = useResetPasswordMutation()
+
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -37,6 +40,8 @@ export default function EnterEmail({setChangeLayout}:any){
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values)
+        localStorage.setItem("email",values.email)
+        resetPassword(values)
         setChangeLayout(1)
     }
 

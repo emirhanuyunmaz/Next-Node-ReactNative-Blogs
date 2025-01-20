@@ -9,12 +9,17 @@ import NavigationCategory from "./NavigationCategory";
 import { useEffect, useState } from "react";
 import { getCookie } from "cookies-next";
 import { UserDropdownMenu } from "./UserDropdownMenu";
+import NavbarSearch from "./NavbarSearch";
+import {loadStripe} from '@stripe/stripe-js';
 
 
 export default function Navbar(){
     const isToken = getCookie("access_token")
     const [userControl,setUserControl] = useState(false)
     
+    
+
+
     useEffect(() => {
         setUserControl(isToken == undefined)
     },[])
@@ -32,8 +37,7 @@ export default function Navbar(){
         </div>
 
         <div className="hidden md:flex gap-2">
-            <Input placeholder="Search" className="border-gray-400" />
-            <Button variant={`outline`} > <Search/> </Button>
+            <NavbarSearch/>
             <div className="ms-3">
                 <ThemeIcon />
             </div>

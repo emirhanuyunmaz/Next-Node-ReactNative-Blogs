@@ -31,8 +31,26 @@ export const userApi = createApi({
       invalidatesTags:["user"],
     }),
 
+    buyPremium: builder.mutation<any , any>({
+      query: () =>({ 
+       url: `/buyPremium`,
+       method:"POST",
+      //  body:body
+      }),
+      // invalidatesTags:["user"],
+    }),
+
+    checkPayment: builder.mutation<any , any>({
+      query: (body) =>({ 
+       url: `/checkPayment`,
+       method:"POST",
+       body:body
+      }),
+      // invalidatesTags:["user"],
+    }),
+
   }),
 })
 
 
-export const { useGetUserProfileQuery,useUpdateUserProfileMutation , useUpdateUserProfileImageMutation} = userApi
+export const { useGetUserProfileQuery,useUpdateUserProfileMutation , useUpdateUserProfileImageMutation , useBuyPremiumMutation,useCheckPaymentMutation} = userApi

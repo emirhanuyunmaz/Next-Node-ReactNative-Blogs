@@ -1,24 +1,20 @@
 'use client'
-import { useGetUserBlogsQuery } from "@/lib/store/blog/blogApi";
+import { useGetAllBlogQuery } from "@/lib/store/blog/blogApi";
 import BlogCard from "./BlogCard";
 import { useEffect, useState } from "react";
 
-interface model{
-    title:String
-}
-
-export default function BlogCardList({title}:model){
-    const getUserBlogList = useGetUserBlogsQuery("")
+export default function BlogCardList(){
+    const getAllBlog = useGetAllBlogQuery("")
     const [data,setData] = useState([])
     
-    console.log(getUserBlogList.data);
+    console.log(getAllBlog.data);
     
     useEffect(() => {
-        if(getUserBlogList.isSuccess){
-            setData(getUserBlogList.data.data)
+        if(getAllBlog.isSuccess){
+            setData(getAllBlog.data.data)
         }
 
-    },[getUserBlogList.isSuccess,getUserBlogList.isError,getUserBlogList.isFetching])
+    },[getAllBlog.isSuccess,getAllBlog.isError,getAllBlog.isFetching])
 
 
 
@@ -27,7 +23,7 @@ export default function BlogCardList({title}:model){
         <div className="flex flex-wrap gap-8 justify-center mt-5">
 
             {
-                getUserBlogList.isSuccess && data.map((item:any) => <BlogCard {...item} key={item._id} />)
+                getAllBlog.isSuccess && data.map((item:any) => <BlogCard {...item} key={item._id} />)
             }
             
 

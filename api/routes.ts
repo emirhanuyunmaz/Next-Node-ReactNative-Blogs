@@ -6,8 +6,8 @@ import userRouter from "./src/user"
 import blogRouter from "./src/blog"
 import adminRouter from "./src/admin"
 const app:Application = express()
-
 dotenv.config() //.env dosyası için gerekli
+
 
 app.use(cors())
 app.use(express.json({limit:"50mb"})) //Gelen verileri json formatinda alınabilmesini sağlar.

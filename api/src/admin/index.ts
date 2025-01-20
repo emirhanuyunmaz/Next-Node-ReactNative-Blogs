@@ -5,7 +5,7 @@ import AuthModels from "../auth/model";
 import Blogs from "../blog/model";
 import slugify from "slugify";
 const router = express.Router()
-const markdown = require( "markdown" ).markdown;
+const markdown = require("markdown").markdown;
 
 // **********************ADMIN LOGIN ************************//
 // Admin girş yapma işlemi
@@ -575,9 +575,7 @@ const getAboutPage = async (req:Request,res:Response) => {
 // Contact verilerinin alınması işlemi.
 const getContact = async(req:Request,res:Response) => {
     try{
-        console.log("::CONTAC GET::");
         const data = await AdminModels.Contact.find()
-        console.log(data);
         res.status(200).json({succes:true,data:data[0]})
     }catch(err){
         console.log("Contact sayfasının verileri çekilirken bir hata ile karşılaşıldı.",err);

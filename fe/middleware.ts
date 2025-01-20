@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
     const url_data = new URL(request.url)
     console.log("ACCTT::",url_data.pathname.includes("/profile"));
     
-    if(access_token.length === 0 && (url_data.pathname.includes("profile") || url_data.pathname.includes("addBlog") )){
+    if(access_token.length === 0 && (url_data.pathname.includes("profile") || url_data.pathname.includes("addBlog") || url_data.pathname.includes("premium") )){
         console.log("TOKKKKKKEEENN:",access_token === undefined);
         // console.log("URKLLL::",request.url);
         
@@ -38,5 +38,5 @@ export function middleware(request: NextRequest) {
  
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/profile','/addBlog','/signup','/login','/blogDetail/:name*']
+  matcher: ['/profile','/addBlog','/signup','/login','/blogDetail/:name*',"/premium"]
 }

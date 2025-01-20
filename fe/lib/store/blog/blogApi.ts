@@ -23,6 +23,11 @@ export const blogApi = createApi({
       providesTags:["blog"]
     }),
 
+    getAllBlog: builder.query<any , any>({
+      query: () => `/getAllBlog`,
+      providesTags:["blog"]
+    }),
+
     getCategories: builder.query<any , any>({
       query: () => `/getCategories`,
     }),
@@ -69,7 +74,7 @@ export const blogApi = createApi({
     }),
 
     getSearchBlogs : builder.query<any,any>({
-      query:(search) => `/getSearchBlogs/${search}`
+      query:(search) => `/searchBlog/${search}`
     }),
     
 
@@ -77,5 +82,5 @@ export const blogApi = createApi({
 })
 
 
-export const { useAddBlogMutation,useGetUserBlogsQuery,useGetCategoriesQuery,useGetSingleBlogQuery,useGetCategoryBlogsQuery ,useGetUpdateBlogQuery ,useUpdateBlogMutation,useDeleteBlogMutation,useUpdateBlogImageMutation} = blogApi
+export const { useAddBlogMutation,useGetUserBlogsQuery,useGetAllBlogQuery,useGetCategoriesQuery,useGetSingleBlogQuery,useGetCategoryBlogsQuery ,useGetUpdateBlogQuery ,useUpdateBlogMutation,useDeleteBlogMutation,useUpdateBlogImageMutation ,useGetSearchBlogsQuery} = blogApi
 

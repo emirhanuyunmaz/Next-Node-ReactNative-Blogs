@@ -10,7 +10,7 @@ export default function Home() {
         <AdvertComponent/>
       </div>
       <div className="mx-auto max-w-7xl mt-10">
-          <BlogCardList title={"Latest Post"} />
+          <BlogCardList  />
       </div>
     </div>
   );

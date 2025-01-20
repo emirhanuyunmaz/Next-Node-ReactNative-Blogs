@@ -1,20 +1,12 @@
+'use client'
+
 import {
-  CirclePlus,
-    Cloud,
-    CreditCard,
-    Github,
-    Keyboard,
-    LifeBuoy,
+    CirclePlus,
     LogOut,
-    Mail,
-    MessageSquare,
-    Plus,
-    PlusCircle,
     ScrollText,
-    Settings,
     User,
-    UserPlus,
-    Users,
+    UserRoundCheck,
+    
   } from "lucide-react"
 import {
     DropdownMenu,
@@ -22,17 +14,45 @@ import {
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuPortal,
     DropdownMenuSeparator,
     DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
-  
+import {loadStripe} from '@stripe/stripe-js';
+import { useBuyPremiumMutation } from "@/lib/store/user/userApi";
+
   export function UserDropdownMenu() {
+    const [buyPremium,resBuyPremium] = useBuyPremiumMutation()
+
+    async function paymant(){
+          
+          // console.log(`${process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY}`);
+          const stripePublicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY
+          const stripe = await loadStripe(stripePublicKey!)
+          console.log(stripe);
+          
+          const res = await buyPremium("")
+
+          console.log(res.data.id);
+        if(res.error){
+          console.log("ERR");
+        }else{
+          console.log("NOT ERR");
+          // const result = await stripe?.redirectToCheckout({
+          //   sessionId:res.data.id
+          // })
+          window.location.href = res.data.url
+          // if(result?.error){
+          //   console.log("ODEME HATA:",result.error);
+            
+          // }
+          
+        }
+
+            
+      }
+
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -55,6 +75,12 @@ import Link from "next/link"
             <DropdownMenuItem>
               <ScrollText />
               <Link href={"/myBlogs"}> My Blog List</Link>
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem>
+              <UserRoundCheck />
+              <button onClick={paymant}> Premium</button>
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>
             

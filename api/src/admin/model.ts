@@ -2,15 +2,6 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema
 
-/**
- * #Admin Model 
- * #About Model => image , (md) About Text
- * #Dashboard Model => UserID , process(delete | update | addBlog) , createAt(date), 
- * #Footer Model => footerAboutText , contactModelID
- * #Contact Model => phoneNumber , Location , Email
- * Category ?
-*/
-
 // **************** HOME CAROUSEL USER ****************** //
 interface HomeCarouselModel{
     imageName:String
@@ -34,9 +25,6 @@ const homeInfoSchema = new Schema<HomeInfoModel>({
         default:Date.now()
     }
 })
-
-
-
 
 // ****************** ADMIN USER ********************** //
 interface AdminUserModel {

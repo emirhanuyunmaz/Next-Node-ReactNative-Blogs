@@ -1,8 +1,8 @@
+'use client'
 import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -11,15 +11,18 @@ import {
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
-import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
 import { z } from "zod"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useResetPasswordControlMutation } from "@/lib/store/auth/authApi"
+import Link from "next/link"
+import { useToast } from "@/hooks/use-toast"
 
 
 const formSchema = z.object({
+    code: z.string().min(5, {
+        message: "Mail Password must be at least 5 characters.",
+    }),
     password: z.string().min(5, {
       message: "Password must be at least 5 characters.",
     }),
@@ -33,10 +36,39 @@ const formSchema = z.object({
 
 
 export default function EnterNewPassword(){
+    const {toast} = useToast()
+    const router = useRouter()
+    const [resetPasswordControl,resResetPasswordControl] = useResetPasswordControlMutation()
+    const [timeOut,setTimeOut] = useState(false)
+    const [timer, setTimer] = useState(120);
+    let time = timer 
     
+    useEffect(() => {
+        
+        if(timer > 0){
+            const interval = setInterval(() => {
+            if(timer<=0){
+                
+                clearInterval(interval)
+
+            }
+                setTimer(prev => {
+                        if(prev <= 0){
+                            clearInterval(interval)
+                            setTimeOut(true)
+                            return 0
+                        }                    
+                        return prev - 1
+                });
+            }, 1000);
+        }
+    },[])
+
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            code:"",
             password: "",
             passwordConfirm:"",
         },
@@ -44,28 +76,82 @@ export default function EnterNewPassword(){
     
 
     function onSubmit(values: z.infer<typeof formSchema>) {
+        const email = localStorage.getItem("email")
         console.log(values)
+        const body = {
+            ...values,
+            email
+        }
+        resetPasswordControl(body)
+        .then((e) => {
+            console.log("EEEE::",e);
+            
+            if(e.error==null){
+                console.log(e);
+                router.push("/login")
+                toast({
+                    title:"SUCCES"
+                })
+            }else{
+                toast({
+                    title:"ERROR"
+                })    
+            }
+        })
+        .catch(() => {
+            console.log("err");
+            
+            toast({
+                title:"ERROR"
+            })
+        })
     }
+    
+
+    
 
     return(<>
         <div className="mt-3">
             <h2 className="text-4xl font-bold">Set a Password</h2>
             <p className="text-primary text-lg ">Your previous password has been reset. Please set a new password for you account.</p>
+            <div className="flex justify-center">
+                <p className="text-xl font-bold">{timer}</p>
+            </div>
+                
         </div>
-        <Form {...form}>
+
+        {timeOut && <div>
+            <p className="text-3xl font-bold text-center">TIME OUT</p>
+            <Button onClick={() => window.location.reload()}>Try Again</Button>
+        </div>}
+        {!timeOut && <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
             control={form.control}
-            name="password"
+            name="code"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Mail Password</FormLabel>
                 <FormControl>
-                    <Input placeholder="Password" {...field} />
+                    <Input placeholder="Mail Password" {...field} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
             )}
+            />
+
+            <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                        <Input placeholder="Password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
             />
 
         <FormField
@@ -84,6 +170,6 @@ export default function EnterNewPassword(){
             <Button type="submit" className="w-full">Submit</Button>
             
         </form>
-        </Form>
+        </Form>}
 </>)
 }
