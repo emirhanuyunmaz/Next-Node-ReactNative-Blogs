@@ -9,6 +9,14 @@ export const adminApi = createApi({
     }}),
   endpoints: (builder) => ({
     
+    adminLogin: builder.mutation<any , any>({
+        query: (body) =>({ 
+         url: `/login`,
+         method:"POST",
+         body:body
+        }),
+    }),
+
     homeCarouselImageAdd: builder.mutation<any , any>({
       query: (body) =>({ 
        url: `/homeCarouselAddImage`,
@@ -222,4 +230,4 @@ export const adminApi = createApi({
 })
 
 
-export const { useGetCategoryQuery,useHomeCarouselImageAddMutation,useHomeCarouselGetImageQuery,useHomeCarouselImageUpdateMutation,useHomeCarouselImageDeleteMutation,useHomePageGetInfoQuery,useHomeInfoUpdateMutation,useGetAllUserQuery,useGetSingleUserQuery,useGetAllBlogsQuery ,useAddCategoryMutation ,useDeleteCategoryMutation , useUpdateFooterMutation ,useGetFooterDataQuery ,useUpdateCategoryMutation , useUpdateBlogMutation,useGetSingleBlogQuery,useUpdateBlogImageMutation , useDeleteBlogMutation ,useGetAboutDataQuery,useUpdateAboutMutation,useUpdateAboutImageMutation,useGetContactQuery, useUpdateContactMutation ,useUpdateUserMutation ,useUpdateUserProfileImageMutation , useAddUserMutation,useDeleteUserMutation,useGetDashboardQuery} = adminApi
+export const { useAdminLoginMutation,useGetCategoryQuery,useHomeCarouselImageAddMutation,useHomeCarouselGetImageQuery,useHomeCarouselImageUpdateMutation,useHomeCarouselImageDeleteMutation,useHomePageGetInfoQuery,useHomeInfoUpdateMutation,useGetAllUserQuery,useGetSingleUserQuery,useGetAllBlogsQuery ,useAddCategoryMutation ,useDeleteCategoryMutation , useUpdateFooterMutation ,useGetFooterDataQuery ,useUpdateCategoryMutation , useUpdateBlogMutation,useGetSingleBlogQuery,useUpdateBlogImageMutation , useDeleteBlogMutation ,useGetAboutDataQuery,useUpdateAboutMutation,useUpdateAboutImageMutation,useGetContactQuery, useUpdateContactMutation ,useUpdateUserMutation ,useUpdateUserProfileImageMutation , useAddUserMutation,useDeleteUserMutation,useGetDashboardQuery} = adminApi

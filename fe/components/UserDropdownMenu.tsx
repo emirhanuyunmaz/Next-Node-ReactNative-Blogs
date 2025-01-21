@@ -21,9 +21,22 @@ import {
 import Link from "next/link"
 import {loadStripe} from '@stripe/stripe-js';
 import { useBuyPremiumMutation } from "@/lib/store/user/userApi";
+import { deleteCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
+// import { cookies } from "next/headers";
 
   export function UserDropdownMenu() {
+    const router = useRouter()
     const [buyPremium,resBuyPremium] = useBuyPremiumMutation()
+
+    async function logoutOnClick(){
+      // const cookieStore = await cookies()
+      // cookieStore.delete("access_token")
+      // cookieStore.delete("refresh_token")
+      deleteCookie("access_token")
+      deleteCookie("refresh_token")
+      location.reload()
+    }
 
     async function paymant(){
           
@@ -87,7 +100,7 @@ import { useBuyPremiumMutation } from "@/lib/store/user/userApi";
           </DropdownMenuGroup>
           <DropdownMenuItem>
             <LogOut />
-            <span>Log out</span>
+            <button onClick={logoutOnClick}>Log out</button>
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -2,6 +2,9 @@ import TicketText from "@/components/TicketText"
 import parse from 'html-react-parser'
 import "./blog_detail.css"
 import DownloadPdfBlog from "@/components/DownloadPdfBlog"
+import { getCookie } from "cookies-next/client"
+import { cookies } from "next/headers"
+
 interface Blogs {
     data : {_id: String,
     title: String,
@@ -19,7 +22,12 @@ interface Blogs {
     category: { _id: String, name: String },
     slug: String,
     __v: Number}
-  }
+}
+
+interface Premium{
+    succes: Boolean,
+    isPremium:Boolean
+}
 
 async function getPost(id: string) {
     const res = await fetch(`http://localhost:8000/blog/getBlog/${id}`)
@@ -27,11 +35,29 @@ async function getPost(id: string) {
     return post.data
 }
 
+
+async function isPremiumControl() {
+    const cookieStore = await cookies()
+    const access_token = cookieStore.get('access_token')
+    // console.log("AA:",access_token?.value);
+    
+    
+    const res = await fetch(`http://localhost:8000/user/isPremium/`,
+        {
+            headers:{
+                access_token:access_token!.value,
+            }
+        }
+    )
+    
+    const post: Premium = await res.json()
+    return post
+}
+
 export default async function Page({params}:any){
     const {name} = await params
     const data = await getPost(name)
-    
-    // console.log("DATA:",data);
+    const {isPremium } = await isPremiumControl()
     
     return(<div className="max-w-7xl  mx-auto min-h-[80vh] mt-5">
             <div className="w-3/4 mx-auto flex flex-col gap-3" >
@@ -55,7 +81,7 @@ export default async function Page({params}:any){
                     <h1 className="text-3xl font-bold text-center">{data.title}</h1>
                     {parse(data.blogText as string)}
                 </div>
-                <DownloadPdfBlog data={data} />
+                {isPremium && <DownloadPdfBlog data={data} />}
             </div>
     
         </div>)

@@ -1,5 +1,4 @@
 'use client'
-import { DatePicker } from "@/components/DatePicker";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -48,17 +47,17 @@ export default function Page(){
     const [uploadImage,resUploadImage] = useUpdateUserProfileImageMutation()
     const [isPremium,setIsPremium] = useState(false)
 
-    const [image,setImage] = useState(userProfile.isSuccess ?userProfile.data?.data.profileImage : "/images/default_user.jpg")
+    const [image,setImage] = useState("/images/default_user.jpg")
     
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            firstName: userProfile.isSuccess ? userProfile.data?.data.firstName : "",
-            lastName: userProfile.isSuccess ? userProfile.data?.data.lastName : "",
-            email:userProfile.isSuccess ? userProfile.data?.data.email : "",
-            address:userProfile.isSuccess ? userProfile.data?.data.address : "",
-            birthDay:userProfile.isSuccess ? userProfile.data?.data.birthDay : "",
+            firstName:  "",
+            lastName:  "",
+            email: "",
+            address: "",
+            birthDay: new Date(Date.now()) ,
         },
     })
      
@@ -92,13 +91,13 @@ export default function Page(){
 
     useLayoutEffect(() => {
         if(userProfile.isSuccess){
-            form.setValue("firstName",userProfile.data?.data.firstName)
-            form.setValue("lastName",userProfile.data?.data.lastName)
-            form.setValue("email",userProfile.data?.data.email)
-            form.setValue("address",userProfile.data?.data.address)
-            form.setValue("birthDay",userProfile.data?.data.birthDay)
-            setImage(userProfile.data?.data.profileImage)
-            setIsPremium(userProfile.data?.data.isPremium)
+            form.setValue("firstName",userProfile.data?.data?.firstName)
+            form.setValue("lastName",userProfile.data?.data?.lastName)
+            form.setValue("email",userProfile.data?.data?.email)
+            form.setValue("address",userProfile.data?.data?.address)
+            form.setValue("birthDay",userProfile.data?.data?.birthDay)
+            setImage(userProfile.data?.data?.profileImage ? userProfile.data?.data?.profileImage : "")
+            setIsPremium(userProfile.data?.data?.isPremium)
         }
     },[userProfile.isFetching])
 

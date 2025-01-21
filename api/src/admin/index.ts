@@ -4,6 +4,7 @@ import { deleteImage, updateImage, uploadImage } from "../@util";
 import AuthModels from "../auth/model";
 import Blogs from "../blog/model";
 import slugify from "slugify";
+import JWT from "../@util/jwt";
 const router = express.Router()
 const markdown = require("markdown").markdown;
 
@@ -12,8 +13,17 @@ const markdown = require("markdown").markdown;
 const loginAdmin = async (req:Request,res:Response) => {
     try{
         console.log("Admin giriş :",req.body);
-        
-        res.status(200).json({succes:true})
+        const email = req.body["email"]
+        const password = req.body["password"]
+        const adminUser = await AdminModels.AdminUser.find({email:email,password:password})
+        console.log(adminUser);
+        if(adminUser.length>0){
+            const token = JWT.adminCreateToken(String(adminUser[0]!._id))
+            res.status(200).json({succes:true,access_token:token.access_token,refresh_token:token.refresh_token})
+        }
+        else{
+            res.status(404).json({succes:false})
+        }
     }catch(err) {
         console.log("Admin giriş yaparken bir hata ile karşılaşıldı.",err);
         res.status(404).json({message:err,succes:false})

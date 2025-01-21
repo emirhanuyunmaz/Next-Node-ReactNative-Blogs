@@ -2,13 +2,13 @@
 
 import { useCheckPaymentMutation } from "@/lib/store/user/userApi";
 import { Check } from "lucide-react";
-import { useParams, usePathname, useSearchParams } from "next/navigation"
+import {useSearchParams } from "next/navigation"
 import { useEffect } from "react";
 
 export default function Page(){
     const search = useSearchParams()
     const session_id = search.get("session_id")
-    console.log("SSSSS:",session_id);
+    // console.log("SSSSS:",session_id);
     const [checkPayment,resCheckPayment] = useCheckPaymentMutation()
 
 

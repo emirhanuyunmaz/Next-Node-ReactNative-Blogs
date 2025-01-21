@@ -133,10 +133,26 @@ const checkPayment = async (req:Request,res:Response) => {
     
 } 
 
+
+const isPremium = async(req:Request,res:Response) => {
+    try{
+        const id = req.headers.id
+        console.log("Kullanıcı id bilgisi.",req.headers);
+        const user = await AuthModels.User.findById(id) 
+        console.log("KULLANICI:",user);
+        
+        res.status(200).json({succes:true,isPremium:user?.isPremium})
+    }catch(err){
+        console.log("Kullanıcı premium kontrol edilirlken bir hata ile karşılaşıldı.",err);
+        res.status(404).json({succes:false})
+    }
+}
+
 router.route("/userProfile").get(authControl,userProfileDetail)
 router.route("/updateProfile").post(authControl,userProfileUpdate)
 router.route("/updateProfileImage").post(authControl,userProfileImageUpdate)
 router.route("/buyPremium").post(authControl,buyPremium)
 router.route("/checkPayment").post(authControl,checkPayment)
+router.route("/isPremium").get(authControl,isPremium)
 
 export default router

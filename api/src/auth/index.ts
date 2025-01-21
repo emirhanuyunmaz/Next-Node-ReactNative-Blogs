@@ -1,4 +1,4 @@
-import express, { Request, Response , Application } from 'express';
+import express, { Request, Response } from 'express';
 import AuthModels from './model';
 import JWT from '../@util/jwt';
 import AdminModels from '../admin/model';
@@ -29,7 +29,8 @@ const signup = async (req:Request,res:Response) => {
             console.log("TOKENS:",tokens);
             const newDashboard = new AdminModels.Dashboard({
                 action:"Register User",
-                userId:getUser._id
+                userId:getUser._id,
+                
             })
             await newDashboard.save()
             res.status(201).json({succes:true,access_token:tokens.access_token,refresh_token:tokens.refresh_token})
