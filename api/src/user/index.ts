@@ -15,7 +15,7 @@ const router = express.Router()
 //Kullanıcı profil detay bilgisi.
 const userProfileDetail = async (req:Request,res:Response) => {
     try{
-        // console.log("Kullanıcı ID bilgisi:",req.headers.id);
+        console.log("Kullanıcı ID bilgisi:",req.headers.id);
         const userID = req.headers.id
         const user = await AuthModels.User.findById(userID)
         // console.log("Kullanıcı bilgisi :",user)
@@ -55,7 +55,7 @@ const userProfileImageUpdate = async(req:Request,res:Response) => {
         
         const user = await AuthModels.User.findById(id)
         let imageName = await updateImage({image:image , imageName:user!.profileImage})
-        imageName = process.env.BASE_URL +"/blog/image/"+ imageName
+        imageName = "update/"+ imageName
         await AuthModels.User.findByIdAndUpdate(id,{profileImage:imageName})
         const newDashboard = new AdminModels.Dashboard({
             userId:id,

@@ -21,7 +21,8 @@ interface BlogModel {
     tags:[],
     writer:String,
     category:String,
-    slug: string
+    slug: string,
+    createdAt:Date
 }
 
 const BlogSchema = new Scheama<BlogModel>({
@@ -37,8 +38,12 @@ const BlogSchema = new Scheama<BlogModel>({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Category"
     },
-    slug: { type: String, slug: "title" , unique:true }
+    slug: { type: String},
+    createdAt:{
+        type:Date,
+        default : Date.now,
 
+    }
 })
 
 const Category = mongoose.model<CategoryModel>("Category",CategorySchema)

@@ -28,7 +28,7 @@ export function middleware(request: NextRequest) {
 
     const regex = new RegExp("/admin/home", "i")
     // Admin olamayan kullanıcıların erişimini engelleme işlemi.
-    if(( regex.test(url_data.pathname) ) && verify.role !="admin"){
+    if(( regex.test(url_data.pathname) ) &&  verify.role !="admin"){
         return NextResponse.redirect(new URL('/',request.url))
     }
 

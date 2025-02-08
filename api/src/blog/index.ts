@@ -98,7 +98,7 @@ const addBlog = async (req:Request,res:Response) => {
     
     try{
         let image = await uploadImage(req.body.image)
-        image = process.env.BASE_URL +"/blog/image/"+ image
+        image = "update/"+ image
         const tags= req.body["tags"]
         const title = req.body["title"]
         const userId = req.headers["id"]
@@ -144,10 +144,9 @@ const addBlog = async (req:Request,res:Response) => {
 // Kullanıcı tarafından yazılan blog listesini getirme işlemi.
 const getUserBlogList = async (req:Request,res:Response) => {
     try{
-        // console.log("Kullanıcı ID bligisi :",req.headers.id);
+
         const id = req.headers.id
-        const userBlogList = await Blogs.Blog.find({writer:id}).populate("writer","profileImage firstName lastName").populate("category","name")
-        // console.log("BLOGS:",userBlogList);
+        const userBlogList = await Blogs.Blog.find({writer:id}).populate("writer","profileImage firstName lastName createdAt").populate("category","name")
         
         res.status(201).json({succes:true,data:userBlogList})
     }catch(err){
@@ -161,7 +160,7 @@ const getSingleBlog = async (req:Request,res:Response) => {
     try{        
         const blogSlug = req.params["name"]
         let data = await Blogs.Blog.findOne({slug:blogSlug}).populate("writer","firstName lastName profileImage").populate("category","name")
-        data!.blogText = markdown.toHTML( data?.blogText )
+        data!.blogText = markdown.toHTML( data!.blogText )
         // console.log(data?.blogText);
         res.status(200).json({succes:true,data:data})
     }catch(err){

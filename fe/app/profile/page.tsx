@@ -106,7 +106,7 @@ export default function Page(){
         <div className="flex flex-col gap-3">
             <div className="flex gap-3">
                 <label htmlFor="userProfileImage" className="relative w-32 h-32 rounded-full hover:shadow-2xl cursor-pointer transition-all">
-                    <img src={`${image ? image : "/images/default_user.jpg"}`}  alt="User Images" className="rounded-full w-full h-full" />
+                    <img src={`${image ? `${process.env.NEXT_PUBLIC_BASE_URL}/${image}` : "/images/default_user.jpg"}`}  alt="User Images" className="rounded-full w-full h-full" />
                     <Camera className="absolute bottom-0 -right-3" />
                 </label>
                 <input onChange={(e) => uploadImageOnClick(e)} hidden id="userProfileImage" type="file" />

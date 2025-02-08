@@ -36,6 +36,7 @@
     "embla-carousel-react": "^8.5.1",
     "emblor": "^1.4.7",
     "html-react-parser": "^5.2.2",
+    "html-to-text": "^9.0.5",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.2",
     "jwt-decode": "^4.0.0",

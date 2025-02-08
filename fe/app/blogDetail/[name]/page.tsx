@@ -45,7 +45,7 @@ async function isPremiumControl() {
     const res = await fetch(`http://localhost:8000/user/isPremium/`,
         {
             headers:{
-                access_token:access_token!.value,
+                access_token:access_token?.value ? access_token?.value :"" ,
             }
         }
     )
@@ -65,7 +65,7 @@ export default async function Page({params}:any){
                 
                 <div className="flex items-center gap-2 pl-3">
                     <div className="relative  h-10 w-10 rounded-full  ">
-                        <img  src={`${data.writer.profileImage}`} alt=""  className="rounded-full" />
+                        <img  src={`${process.env.BASE_URL}/${data.writer.profileImage}`} alt=""  className="rounded-full" />
                     </div>
                     <div className="flex gap-5 text-gray-600 ">
                         <p>{data.writer.firstName} {data.writer.lastName}</p>
@@ -74,7 +74,7 @@ export default async function Page({params}:any){
                 </div>
     
                 <div className="relative h-[50vh]  ">
-                    <img src={`${data.image}`} className="w-full h-full" alt=""  />
+                    <img src={`${process.env.BASE_URL}/${data.image}`} className="w-full h-full" alt=""  />
                 </div>
                 
                 <div className="flex flex-col gap-2">

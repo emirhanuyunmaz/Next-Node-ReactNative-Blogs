@@ -63,10 +63,9 @@ const login = async (req:Request,res:Response) => {
         
         console.log("UUU:",user);
         if(user !== null){
-            const data = JWT.createToken(String(user._id ))
-            console.log(data);
+            const tokens = JWT.createToken(String(user._id ))
             
-            res.status(201).json({succes:true})
+            res.status(201).json({succes:true,access_token:tokens.access_token,refresh_token:tokens.refresh_token})
         }
         else{    
             res.status(404).json({message:"User Not Found",succes:false})
