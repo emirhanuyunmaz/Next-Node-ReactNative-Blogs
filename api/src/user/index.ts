@@ -2,7 +2,7 @@ import express ,{Request,Response} from "express"
 import { authControl } from "../middleware/auth"
 import AuthModels from "../auth/model";
 import AdminModels from "../admin/model";
-import { updateImage} from "../@util";
+import { updateImage, uploadImage} from "../@util";
 import Stripe from "stripe";
 import dotenv from 'dotenv';
 import crypto from "crypto"
@@ -54,14 +54,30 @@ const userProfileImageUpdate = async(req:Request,res:Response) => {
         const image = req.body["image"]
         
         const user = await AuthModels.User.findById(id)
-        let imageName = await updateImage({image:image , imageName:user!.profileImage})
-        imageName = "update/"+ imageName
-        await AuthModels.User.findByIdAndUpdate(id,{profileImage:imageName})
-        const newDashboard = new AdminModels.Dashboard({
-            userId:id,
-            action:"Update Profile"
-        })
-        await newDashboard.save()
+        console.log("KULLANICI::",user?.profileImage);
+        
+        if(user?.profileImage == undefined){
+
+            let imageName = await uploadImage(image)
+            imageName = "uploads/"+ imageName
+
+            await AuthModels.User.findByIdAndUpdate(id,{profileImage:imageName})
+            const newDashboard = new AdminModels.Dashboard({
+                userId:id,
+                action:"Update Profile"
+            })
+            await newDashboard.save()
+
+        }else{
+            let imageName = await updateImage({image:image , imageName:user!.profileImage})
+            imageName = "uploads/"+ imageName
+            await AuthModels.User.findByIdAndUpdate(id,{profileImage:imageName})
+            const newDashboard = new AdminModels.Dashboard({
+                userId:id,
+                action:"Update Profile"
+            })
+            await newDashboard.save()
+        }
         res.status(201).json({succes:true})
     }catch(err){
         console.log("Kullanıcı profil resmi güncellenirken bi,r hata ile karşılaşıldı.",err);

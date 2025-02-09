@@ -1,11 +1,12 @@
 import React, { useLayoutEffect, useState } from 'react'
-import {AsyncStorage, View,  StyleSheet, Text, FlatList } from 'react-native'
+import {AsyncStorage, View,  StyleSheet, Text, FlatList, ScrollView, RefreshControl } from 'react-native'
 import BlogCard from '../components/BlogCard'
 import { useGetAllBlogQuery } from '../lib/store/blog/blogApi'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
 export default function HomeScreen() {
     const [blogData,setBlogData] = useState([])
-
+    const [refreshing, setRefreshing] = useState(false);
     const getAllBlog = useGetAllBlogQuery()
 
     async function deneme(){
@@ -13,7 +14,9 @@ export default function HomeScreen() {
         // console.log("ASDSDA:",data);
         
     }
-    
+    async function onRefresh(){
+        getAllBlog.refetch()
+    }
     
     useLayoutEffect(() => {
         deneme()
@@ -28,17 +31,25 @@ export default function HomeScreen() {
     },[getAllBlog.isFetching])
 
   return (
-    <View style={styles.container}>
-        <View style={styles.headerContainer}>
-            <Text style={styles.headerStyle} >Blogs</Text>
-        </View>
-        <FlatList  
-            data={blogData}
-            renderItem={({item}) => <BlogCard {...item}/>}
-            keyExtractor={item => item._id}
-        />
-
-    </View>
+    <SafeAreaProvider>
+        <SafeAreaView >
+            <ScrollView  contentContainerStyle={styles.scrollView}
+            refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
+                <View style={styles.container}>
+                    <View style={styles.headerContainer}>
+                        <Text style={styles.headerStyle} >Blogs</Text>
+                    </View>
+                    <FlatList  
+                        data={blogData}
+                        renderItem={({item}) => <BlogCard {...item}/>}
+                        keyExtractor={item => item._id}
+                        />
+                </View>
+            </ScrollView>
+        </SafeAreaView>
+    </SafeAreaProvider>
   )
 }
 

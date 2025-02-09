@@ -36,7 +36,7 @@ const homeCarouselImageAdd = async (req:Request,res:Response) => {
     try{
         const image = req.body["image"]
         let imageName = await uploadImage(image)
-        imageName = process.env.BASE_URL +"/blog/image/"+ imageName
+        imageName = "uploads/"+ imageName
         
         const newImage = new AdminModels.HomeCarousel({
             imageName:imageName
@@ -73,7 +73,7 @@ const homeCarouselUpdateImage = async(req:Request,res:Response) => {
             image:image
         }
         let newImageName = await updateImage(dataImage)
-        newImageName = process.env.BASE_URL +"/blog/image/" +newImageName  
+        newImageName = "uploads/" +newImageName  
         await AdminModels.HomeCarousel.findByIdAndUpdate(imageId,{imageName:newImageName})
         res.status(201).json({succes:true})
     }catch(err){
@@ -220,11 +220,11 @@ const updateUserProfileImage = async (req:Request,res:Response) => {
         
         if(user?.profileImage){
             let imageName = await updateImage({imageName:user!.profileImage,image:image})
-            imageName = process.env.BASE_URL + "/blog/image/" + imageName  
+            imageName = "uploads/"+ imageName  
             await AuthModels.User.findByIdAndUpdate(id,{profileImage:imageName})
         }else{
             let imageName = await uploadImage(image)
-            imageName =  process.env.BASE_URL + "/blog/image/" + imageName
+            imageName =  "uploads/"+ imageName
             await AuthModels.User.findByIdAndUpdate(id,{profileImage:imageName})
         }
         res.status(201).json({succes:true})
@@ -249,7 +249,7 @@ const addUser = async(req:Request,res:Response) => {
         let imageName = undefined
         if(profileImage){
             imageName = await uploadImage(profileImage)
-            imageName = process.env.BASE_URL +"/blog/image/" + imageName  
+            imageName = "uploads/"+ imageName  
         }
 
         const newUser = new AuthModels.User({
@@ -349,7 +349,7 @@ const updateBlogImage = async(req:Request,res:Response) => {
 
         let newImage = await updateImage({imageName:blogData!.image,image:image})
 
-        newImage = process.env.BASE_URL +"/blog/image/" +newImage 
+        newImage = "uploads/" +newImage 
 
         await Blogs.Blog.findByIdAndUpdate(id,{image:newImage})
 
@@ -532,7 +532,7 @@ const updateAboutImage = async(req:Request,res:Response) => {
         const image = req.body["image"]
         if(data.length == 0){
             let newImageName = await uploadImage(image) 
-            newImageName = process.env.BASE_URL +"/blog/image/" + newImageName
+            newImageName = "uploads/" + newImageName
             console.log("Veri eklenememiş");
             const newAboutData = new AdminModels.About({
                 image:newImageName
@@ -542,11 +542,11 @@ const updateAboutImage = async(req:Request,res:Response) => {
         }else{
             if(data[0].image){
                 let newImageName = await updateImage({imageName:data[0].image,image:image}) 
-                newImageName = process.env.BASE_URL +"/blog/image/" + newImageName
+                newImageName = "uploads/" + newImageName
                 await AdminModels.About.findByIdAndUpdate(data[0]._id,{image:newImageName})
             }else{
                 let newImageName = await uploadImage(image)
-                newImageName = process.env.BASE_URL +"/blog/image/" + newImageName              
+                newImageName = "uploads/" + newImageName              
                 await AdminModels.About.findByIdAndUpdate(data[0]._id,{image:newImageName})
             }
         }

@@ -52,7 +52,8 @@ export function MainCarousel() {
               <Card>
                 <CardContent className="relative flex h-[80vh] items-center justify-center p-6">
                   {/* <div className="border-2 border-black w-full h-full"> */}
-                    <img src={`${item.imageName}`} className="w-full h-full absolute"  alt="" />
+                  {/* `${process.env.NEXT_PUBLIC_BASE_URL}/${image}` */}
+                    <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/${item.imageName}`} className="w-full h-full absolute"  alt="" />
                   {/* </div> */}
                 </CardContent>
               </Card>

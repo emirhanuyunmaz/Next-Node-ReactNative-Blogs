@@ -81,7 +81,7 @@ export default function CarouselImage(){
         <div className="flex gap-2 flex-wrap w-full">
             {
                 images?.length != 0 && images?.map((item:any) => <div key={item._id} className="">
-                <img className="w-40 h-40 " style={{objectFit:"fill"}} src={item.imageName} alt="Carousel Image" />
+                <img className="w-40 h-40 " style={{objectFit:"fill"}} src={`${process.env.NEXT_PUBLIC_BASE_URL}/${item.imageName}`} alt="Carousel Image" />
                 <div className="w-full flex justify-around mt-1">
                     <label htmlFor="homeCarouselUpdateImage"  className="border flex justify-center items-center px-2 py-1 rounded-md border-primary hover:opacity-80 cursor-pointer transition-all"  ><ImageUp /></label>
                     <input hidden onChange={(e:any) => updateImage({e:e,imageId:item._id})} id="homeCarouselUpdateImage" type="file" />

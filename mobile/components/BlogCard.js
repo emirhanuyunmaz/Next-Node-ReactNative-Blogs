@@ -19,8 +19,6 @@ export default function BlogCard({category,image,title,slug}) {
     console.log(`${process.env.BASE_URL}/${image}`);
     
 
-
-
   return (
     <TouchableOpacity onPress={toBlogDetail} style={styles.container}>
         <Image style={styles.imageStyle} source={{uri:`http://192.168.1.22:8000/${image}`}} />
@@ -44,6 +42,7 @@ const styles = StyleSheet.create({
         paddingHorizontal:10,
         paddingVertical:15,
         borderRadius:10,
+        marginBottom:10
     },
     textContainerStyle:{
         flexDirection:"column",

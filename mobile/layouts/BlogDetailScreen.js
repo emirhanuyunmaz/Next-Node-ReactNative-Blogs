@@ -37,10 +37,10 @@ export default function BlogDetailScreen() {
       </Text>
   {/* {data == null && <Text>DATA YOK</Text>}
   {data != null && <Text>{data.blogText}</Text>} */}
-  <RenderHtml
+  {data != null && data.blogText != null && <RenderHtml
       contentWidth={width}
       source={{html:data.blogText}}
-    />
+    />}
 
     </ScrollView>
   )

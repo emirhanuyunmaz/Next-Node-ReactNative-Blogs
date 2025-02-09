@@ -2,7 +2,6 @@ import TicketText from "@/components/TicketText"
 import parse from 'html-react-parser'
 import "./blog_detail.css"
 import DownloadPdfBlog from "@/components/DownloadPdfBlog"
-import { getCookie } from "cookies-next/client"
 import { cookies } from "next/headers"
 
 interface Blogs {
@@ -59,13 +58,16 @@ export default async function Page({params}:any){
     const data = await getPost(name)
     const {isPremium } = await isPremiumControl()
     
+    console.log("AA:",process.env.NEXT_PUBLIC_BASE_URL);
+    
+
     return(<div className="max-w-7xl  mx-auto min-h-[80vh] mt-5">
             <div className="w-3/4 mx-auto flex flex-col gap-3" >
                 <TicketText>{data.category.name}</TicketText>
                 
                 <div className="flex items-center gap-2 pl-3">
                     <div className="relative  h-10 w-10 rounded-full  ">
-                        <img  src={`${process.env.BASE_URL}/${data.writer.profileImage}`} alt=""  className="rounded-full" />
+                        <img  src={`${process.env.NEXT_PUBLIC_BASE_URL}/${data.writer.profileImage}`} alt=""  className="rounded-full" />
                     </div>
                     <div className="flex gap-5 text-gray-600 ">
                         <p>{data.writer.firstName} {data.writer.lastName}</p>
@@ -74,7 +76,7 @@ export default async function Page({params}:any){
                 </div>
     
                 <div className="relative h-[50vh]  ">
-                    <img src={`${process.env.BASE_URL}/${data.image}`} className="w-full h-full" alt=""  />
+                    <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/${data.image}`} className="w-full h-full" alt=""  />
                 </div>
                 
                 <div className="flex flex-col gap-2">

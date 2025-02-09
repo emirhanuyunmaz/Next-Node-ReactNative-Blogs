@@ -25,7 +25,7 @@ export default async function Page(){
     return(<div className="max-w-7xl min-h-[85vh] flex flex-col mx-auto">
         
         <div className="relative w-full h-[70vh] text-center flex justify-center">
-            <img  src={`${data?.image ?  data?.image : "/images/not_image.png" }`} alt="About Image" className="w-full" />
+            <img  src={`${data?.image ?  `${process.env.NEXT_PUBLIC_BASE_URL}/${data?.image}` : "/images/not_image.png" }`} alt="About Image" className="w-full" />
         </div>
 
         <div className="flex items-center flex-col mt-3 gap-3">

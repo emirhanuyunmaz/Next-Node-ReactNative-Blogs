@@ -47,7 +47,7 @@ export default function Page(){
         <div className="w-[91%] px-10">
             <div>
                 <div className="w-96 h-52 flex justify-center items-center border-2">
-                    <img src={`${aboutImage ? aboutImage : "/images/not_image.png"}`} className="w-full h-full " alt="About image" />
+                    <img src={`${aboutImage ? `${process.env.NEXT_PUBLIC_BASE_URL}/${aboutImage}` : "/images/not_image.png"}`} className="w-full h-full " alt="About image" />
                 </div>
                 <div className="my-3">
                     <label htmlFor="uploadImage" className="border border-primary p-2 rounded-xl cursor-pointer hover:opacity-80 transition-all">Update Image</label>

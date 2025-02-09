@@ -98,7 +98,7 @@ const addBlog = async (req:Request,res:Response) => {
     
     try{
         let image = await uploadImage(req.body.image)
-        image = "update/"+ image
+        image = "uploads/"+ image
         const tags= req.body["tags"]
         const title = req.body["title"]
         const userId = req.headers["id"]
@@ -207,7 +207,7 @@ const updateBlogImage = async (req:Request,res:Response) => {
         const blog = await Blogs.Blog.find({slug:slug})
 
         let newBlogImage = await updateImage({imageName:blog[0].image,image:image})
-        newBlogImage = process.env.BASE_URL +"/blog/image/"+ newBlogImage
+        newBlogImage = "uploads/"+ newBlogImage
         await Blogs.Blog.findByIdAndUpdate(blog[0]._id,{image:newBlogImage})
 
         res.status(201).json({succes:true})
@@ -277,6 +277,6 @@ router.route("/getCategories").get(getCategories)
 router.route("/getUpdateBlog/:slug").get(getUpdateBlog)
 router.route("/getCategoryBlogs/:categoryName").get(getCategoryBlogs)
 router.route("/getBlogs").get(authControl,getUserBlogList)
-router.route("/image/:name").get(getImage)
+// router.route("/image/:name").get(getImage)
 
 export default router
