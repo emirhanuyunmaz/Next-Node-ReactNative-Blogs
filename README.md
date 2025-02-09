@@ -1,4 +1,19 @@
 # BlogApp
+ BlogApp is an application where users can share posts, sign up and log in with Google, and receive emails to reset their passwords.
+
+## Frontend (Nextjs)
+ - Tailwind
+ - Axios
+ - Redux
+ - Shadcn
+ - Stripe
+ - Lucide Icon
+## Backend (Nodejs)
+ - Mongodb
+ - Nodemailer
+ - Stripe
+ - Jsonwebtoken
+
 ## Frontend (Nextjs)
  ![Ekran Görüntüsü (205)](https://github.com/user-attachments/assets/1d66dc93-1d65-43b8-a146-4f7d9ff647e7)
 ![Ekran Görüntüsü (204)](https://github.com/user-attachments/assets/18892e48-9a08-4d22-9efd-38916a495abc)
